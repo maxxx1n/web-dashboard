@@ -38,7 +38,7 @@ export default function Sidebar({ view, setView, tareas = [] }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,#9d96f0,#6c63ff)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>📚</div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: 17, color: dark.text, letterSpacing: "-0.5px" }}>StudyDesk</div>
+            <div style={{ fontWeight: 800, fontSize: 17, color: dark.text, letterSpacing: "-0.5px" }}>Pagina Estudio by MAX</div>
             <div style={{ fontSize: 11, color: dark.muted }}>Panel de estudio</div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function Sidebar({ view, setView, tareas = [] }) {
       <div style={{ padding: "16px 22px", borderTop: `1px solid ${dark.border}` }}>
         <div style={{ fontSize: 11, color: dark.muted, marginBottom: 2 }}>Hoy</div>
         <div style={{ fontSize: 13, fontWeight: 600, color: dark.text }}>
-          {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short" })}
+          {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
         </div>
       </div>
     </div>
