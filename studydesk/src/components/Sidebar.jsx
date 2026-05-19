@@ -57,7 +57,7 @@ export default function Sidebar({ view, setView, tareas = [] }) {
       <div style={{ padding: "16px 22px", borderTop: `1px solid ${dark.border}` }}>
         <div style={{ fontSize: 11, color: dark.muted, marginBottom: 2 }}>Hoy</div>
         <div style={{ fontSize: 13, fontWeight: 600, color: dark.text }}>
-          {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short" })}
+          {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
         </div>
       </div>
     </div>
