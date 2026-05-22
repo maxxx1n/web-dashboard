@@ -40,7 +40,7 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button className="btn-primary" style={{ ...btnPrimary, fontSize: 13, padding: "9px 16px", display: "flex", alignItems: "center", gap: 6 }}
             onClick={() => onNewRecordatorio({ fecha: todayStr, hora: "09:00" })}>
-            <Bell size={14} /> Recordatorio
+            <Bell size={14} /> Nuevo Recordatorio
           </button>
           <button className="btn-ghost" style={navBtn} onClick={prevMes}>‹</button>
           <span style={{ fontWeight: 600, fontSize: 15, minWidth: 150, textAlign: "center" }}>{MESES[calMes]} {calAnio}</span>
@@ -100,7 +100,7 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
 
             <button className="btn-primary" style={{ ...btnPrimary, fontSize: 12, padding: "8px 14px", marginBottom: 16, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
               onClick={() => onNewRecordatorio({ fecha: diaSelStr, hora: "09:00" })}>
-              <Plus size={14} /> Recordatorio para este día
+              <Plus size={14} /> Nuevo Recordatorio para este día
             </button>
 
             {recDia.length > 0 && <>
