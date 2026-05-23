@@ -8,7 +8,7 @@ export default function Inicio({ tareas, materias, recordatorios, getMNombre, ge
   const pct        = tareas.length ? Math.round((hechas / tareas.length) * 100) : 0;
 
   const hora = TODAY.getHours();
-  const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
+  const saludo = hora < 12 ? "Buenos días Max" : hora < 19 ? "Buenas tardes Max" : "Buenas noches Max";
 
   return (
     <div>
