@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Bell, Pencil, Trash2, Plus, X } from "lucide-react";
-import { dark, MESES, PRIORITY, pad, todayStr } from "../constants";
+import { dark, MESES, pad, todayStr } from "../constants";
 import { btnPrimary, badge, iconBtn } from "../styles/shared";
 
 export default function Calendario({ tareas, recordatorios, getMColor, getMBg, getMText, getMNombre, onNewRecordatorio, onEditRecordatorio, onDelRecordatorio }) {
@@ -129,7 +129,6 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{t.titulo}</div>
                   <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
                     <span style={badge(getMBg(t.materiaId), getMText(t.materiaId))}>{getMNombre(t.materiaId)}</span>
-                    <span style={badge(PRIORITY[t.prioridad]?.bg, PRIORITY[t.prioridad]?.color)}>{PRIORITY[t.prioridad]?.label}</span>
                   </div>
                 </div>
               ))}
