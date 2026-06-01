@@ -15,7 +15,6 @@ const NAV = [
   { id: "horarios",   icon: Clock,           label: "Horarios"     },
   { id: "tareas",     icon: CheckSquare,     label: "Tareas"       },
   { id: "calendario", icon: Calendar,        label: "Calendario"   },
-  { id: "pomodoro",   icon: Timer,           label: "Pomodoro"     },
   { id: "stats",      icon: BarChart3,       label: "Estadísticas" },
 ];
 

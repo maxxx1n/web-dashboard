@@ -3,7 +3,7 @@ import { COLORS, COLOR_BG, COLOR_TEXT, dark } from "./constants";
 import { useStorage } from "./hooks/useStorage";
 import Sidebar from "./components/Sidebar";
 import { MateriaModal, TareaModal, RecordatorioModal } from "./components/Modals";
-import { Inicio, Materias, Horarios, Tareas, Calendario, Pomodoro, Stats } from "./views";
+import { Inicio, Materias, Horarios, Tareas, Calendario,Stats } from "./views";
 
 const DEFAULT_MATERIAS = [
   { id: 1, nombre: "Matemáticas", descripcion: "Álgebra y análisis",  colorIdx: 0, horarios: [{ dia: "Lunes",     inicio: "08:00", fin: "10:00" }] },
@@ -166,7 +166,6 @@ export default function App() {
           {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={delHorario} />}
           {view === "tareas"     && <Tareas     tareas={tareas} materias={materias} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} onNew={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} onEdit={t => openModal("tarea", { ...t })} onDelete={delTarea} />}
           {view === "calendario" && <Calendario tareas={tareas} recordatorios={recordatorios} getMColor={getMColor} getMBg={getMBg} getMText={getMText} getMNombre={getMNombre} onNewRecordatorio={data => openModal("recordatorio", data)} onEditRecordatorio={r => openModal("recordatorio", { ...r })} onDelRecordatorio={delRecordatorio} />}
-          {view === "pomodoro"   && <Pomodoro   materias={materias} />}
           {view === "stats"      && <Stats      tareas={tareas} materias={materias} getMColor={getMColor} getMNombre={getMNombre} />}
         </main>
       </div>
