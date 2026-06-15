@@ -6,3 +6,4 @@ export { default as Calendario } from "./Calendario";
 export { default as Stats }      from "./Stats";
 export { default as Login }      from "./Login";
 export { default as Perfil }     from "./Perfil";
+export { default as Admin }      from "./Admin";

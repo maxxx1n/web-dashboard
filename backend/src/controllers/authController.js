@@ -16,7 +16,7 @@ export const register = async (req, res, next) => {
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ data: { email, password: hashed, name } });
 
-    res.status(201).json({ token: generateToken(user.id), user: { id: user.id, email: user.email, name: user.name } });
+    res.status(201).json({ token: generateToken(user.id), user: { id: user.id, email: user.email, name: user.name, role: user.role, status: user.status } });
   } catch (err) { next(err); }
 };
 
@@ -31,13 +31,14 @@ export const login = async (req, res, next) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ error: "Credenciales inválidas" });
 
-    res.json({ token: generateToken(user.id), user: { id: user.id, email: user.email, name: user.name } });
+    if (user.status === "Inactivo") return res.status(403).json({ error: "Cuenta inactiva" });
+    res.json({ token: generateToken(user.id), user: { id: user.id, email: user.email, name: user.name, role: user.role, status: user.status } });
   } catch (err) { next(err); }
 };
 
 export const me = async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, email: true, name: true } });
+    const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, email: true, name: true, role: true, status: true } });
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
     res.json(user);
   } catch (err) { next(err); }

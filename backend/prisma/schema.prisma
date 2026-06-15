@@ -12,6 +12,8 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  role      String   @default("Usuario")
+  status    String   @default("Activo")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

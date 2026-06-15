@@ -2,14 +2,15 @@ import { PRIORITY } from "../config/constants";
 import { TODAY, todayStr } from "../utils/helpers";
 import { useState } from "react";
 
-export default function Inicio({ tareas, materias, recordatorios, getMNombre, getMBg, getMText, setEstado, user, goToProfile, logout }) {
+export default function Inicio({ tareas, materias, recordatorios, getMNombre, getMBg, getMText, setEstado, user, goToProfile, goToAdmin, logout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pendientes = tareas.filter(t => t.estado !== "hecha").length;
   const hechas     = tareas.filter(t => t.estado === "hecha").length;
   const hoy        = tareas.filter(t => t.fecha === todayStr && t.estado !== "hecha");
   const pct        = tareas.length ? Math.round((hechas / tareas.length) * 100) : 0;
 
-  const hora = TODAY.getHours();
+  const now = new Date();
+  const hora = now.getHours();
   const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
 
   return (
@@ -18,7 +19,7 @@ export default function Inicio({ tareas, materias, recordatorios, getMNombre, ge
       <div className="page-header">
         <div>
           <div className="welcome-date">
-            {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            {now.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </div>
           <h1 className="welcome-title">{saludo} {user?.name?.split(" ")[0] || "Usuario"}</h1>
           <p className="welcome-summary">
@@ -26,21 +27,30 @@ export default function Inicio({ tareas, materias, recordatorios, getMNombre, ge
             {hoy.length > 0 && <> <strong style={{ color: "var(--danger)" }}>{hoy.length}</strong> vence{hoy.length !== 1 ? "n" : ""} hoy.</>}
           </p>
         </div>
-        <div style={{ position: 'relative' }}>
-          <div 
-            className="profile-fab" 
-            style={{ position: 'relative', bottom: 'auto', right: 'auto', margin: 0, zIndex: 1 }}
-            onClick={() => setMenuOpen(!menuOpen)}
-            title="Mi Perfil"
-          >
-            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{user?.name?.split(" ")[0] || "Usuario"}</span>
+            <span style={{ fontSize: '11px', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.rol || "Administrador"}</span>
           </div>
-          {menuOpen && (
-            <div className="profile-dropdown">
-              <button className="dropdown-item" onClick={goToProfile}>Mi Perfil</button>
-              <button className="dropdown-item danger" onClick={logout}>Cerrar Sesión</button>
+          <div style={{ position: 'relative' }}>
+            <div 
+              className="profile-fab" 
+              style={{ position: 'relative', bottom: 'auto', right: 'auto', margin: 0, zIndex: 1 }}
+              onClick={() => setMenuOpen(!menuOpen)}
+              title="Mi Perfil"
+            >
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
             </div>
-          )}
+            {menuOpen && (
+              <div className="profile-dropdown">
+                {user?.rol === "Administrador" && (
+                  <button className="dropdown-item" onClick={goToAdmin}>Administración</button>
+                )}
+                <button className="dropdown-item" onClick={goToProfile}>Mi Perfil</button>
+                <button className="dropdown-item danger" onClick={logout}>Cerrar Sesión</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

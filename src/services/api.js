@@ -30,12 +30,27 @@ async function fetchApi(endpoint, options = {}) {
 }
 
 // ── Auth ──────────────────────────────────────────────────────────
+function mapUser(u) {
+  return { id: u.id, email: u.email, name: u.name, rol: u.role || "Usuario", estado: u.status || "Activo" };
+}
+
 export const authApi = {
-  login: (email, password) =>
-    fetchApi("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
-  register: (email, password, name) =>
-    fetchApi("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) }),
-  me: () => fetchApi("/auth/me"),
+  login: async (email, password) => {
+    const data = await fetchApi("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+    return { token: data.token, user: mapUser(data.user) };
+  },
+  register: async (email, password, name) => {
+    const data = await fetchApi("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) });
+    return { token: data.token, user: mapUser(data.user) };
+  },
+  me: async () => {
+    const data = await fetchApi("/auth/me");
+    return mapUser(data);
+  },
+  updateProfile: async (data) => {
+    const res = await fetchApi("/users/me", { method: "PUT", body: JSON.stringify(data) });
+    return mapUser(res);
+  },
 };
 
 // ── Materias (Subjects) ───────────────────────────────────────────
@@ -235,4 +250,23 @@ export const remindersApi = {
     };
   },
   remove: (id) => fetchApi(`/reminders/${id}`, { method: "DELETE" }),
+};
+
+// ── Usuarios (Admin) ──────────────────────────────────────────────
+export const usersApi = {
+  getAll: async () => {
+    const users = await fetchApi("/users");
+    return users.map(u => ({
+      id: u.id,
+      nombre: u.name || "Usuario",
+      email: u.email,
+      rol: u.role || "Usuario",
+      estado: u.status || "Activo"
+    }));
+  },
+  updateRole: (id, rol) =>
+    fetchApi(`/users/${id}/role`, { method: "PATCH", body: JSON.stringify({ role: rol }) }),
+  updateStatus: (id, estado) =>
+    fetchApi(`/users/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: estado }) }),
+  remove: (id) => fetchApi(`/users/${id}`, { method: "DELETE" }),
 };

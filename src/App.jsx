@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
-import { COLORS } from "./config/constants";
+import { COLORS, COLOR_BG, COLOR_TEXT } from "./config/constants";
 import { subjectsApi, tasksApi, remindersApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/layout/Sidebar";
 import { MateriaModal, TareaModal, RecordatorioModal } from "./components/modals/Modals";
-import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil } from "./pages";
-
-const COLOR_BG   = ["#2d2b4e","#1a3d30","#3d1f1f","#1a2d4e","#3d1a2d","#3d2e0a","#1f3d0a","#2d1a3d"];
-const COLOR_TEXT  = ["#c4c0ff","#6ee7b7","#fca5a5","#93c5fd","#f9a8d4","#fde68a","#d9f99d","#e9d5ff"];
+import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil, Admin } from "./pages";
 
 export default function App() {
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, loading: authLoading, logout, updateProfile } = useAuth();
   
   const [view, setView] = useState("inicio");
   const [materias,      setMaterias]      = useState([]);
@@ -172,13 +169,14 @@ export default function App() {
       <div className="app-layout">
         <Sidebar view={view} setView={setView} tareas={tareas} />
         <main className="main-content">
-          {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} user={user} goToProfile={() => setView("perfil")} logout={logout} />}
+          {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} user={user} goToProfile={() => setView("perfil")} goToAdmin={() => setView("admin")} logout={logout} />}
           {view === "materias"   && <Materias   materias={materias} tareas={tareas} onNew={() => openModal("materia", { horarios: [] })} onEdit={m => openModal("materia", { ...m })} onDelete={delMateria} />}
           {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={adaptedDelHorario} />}
           {view === "tareas"     && <Tareas     tareas={tareas} materias={materias} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} onNew={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} onEdit={t => openModal("tarea", { ...t })} onDelete={delTarea} />}
           {view === "calendario" && <Calendario tareas={tareas} recordatorios={recordatorios} getMColor={getMColor} getMBg={getMBg} getMText={getMText} getMNombre={getMNombre} onNewRecordatorio={data => openModal("recordatorio", data)} onEditRecordatorio={r => openModal("recordatorio", { ...r })} onDelRecordatorio={delRecordatorio} />}
           {view === "stats"      && <Stats      tareas={tareas} materias={materias} getMColor={getMColor} getMNombre={getMNombre} />}
-          {view === "perfil"     && <Perfil     user={user} logout={logout} />}
+          {view === "perfil"     && <Perfil     user={user} logout={logout} updateProfile={updateProfile} />}
+          {view === "admin"      && <Admin      user={user} />}
           
 
         </main>
