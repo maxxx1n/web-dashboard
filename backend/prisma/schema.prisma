@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  subjects  Subject[]
+  tasks     Task[]
+  reminders Reminder[]
+
+  @@map("users")
+}
+
+model Subject {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  colorIdx    Int      @default(0) @map("color_idx")
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schedules Schedule[]
+  tasks     Task[]
+
+  @@map("subjects")
+}
+
+model Schedule {
+  id        Int    @id @default(autoincrement())
+  day       String
+  startTime String @map("start_time")
+  endTime   String @map("end_time")
+  subjectId Int    @map("subject_id")
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("schedules")
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  priority  String   @default("media")
+  status    String   @default("pendiente")
+  dueDate   String?  @map("due_date")
+  subjectId Int?     @map("subject_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+model Reminder {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        String
+  time        String?
+  description String?
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reminders")
+}
