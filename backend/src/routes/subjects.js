@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const ctrl = require("../controllers/subjectController");
+import { Router } from "express";
+import * as ctrl from "../controllers/subjectController.js";
 
 const router = Router();
 
@@ -12,4 +12,4 @@ router.delete("/:id", ctrl.remove);
 router.post("/:id/schedules", ctrl.addSchedule);
 router.delete("/:id/schedules/:scheduleId", ctrl.removeSchedule);
 
-module.exports = router;
+export default router;

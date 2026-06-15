@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const ctrl = require("../controllers/reminderController");
+import { Router } from "express";
+import * as ctrl from "../controllers/reminderController.js";
 
 const router = Router();
 
@@ -8,4 +8,4 @@ router.post("/", ctrl.create);
 router.put("/:id", ctrl.update);
 router.delete("/:id", ctrl.remove);
 
-module.exports = router;
+export default router;

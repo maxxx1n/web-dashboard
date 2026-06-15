@@ -1,11 +1,11 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const prisma = require("../config/db");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../config/db.js";
 
 const generateToken = (userId) =>
   jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
 
-exports.register = async (req, res, next) => {
+export const register = async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email y contraseña requeridos" });
@@ -20,7 +20,7 @@ exports.register = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email y contraseña requeridos" });
@@ -35,7 +35,7 @@ exports.login = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.me = async (req, res, next) => {
+export const me = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, email: true, name: true } });
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });

@@ -8,4 +8,4 @@ function errorHandler(err, req, res, _next) {
   res.status(status).json({ error: err.message || "Error interno del servidor" });
 }
 
-module.exports = errorHandler;
+export default errorHandler;

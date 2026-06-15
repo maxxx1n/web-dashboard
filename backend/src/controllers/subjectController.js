@@ -1,6 +1,6 @@
-const prisma = require("../config/db");
+import prisma from "../config/db.js";
 
-exports.getAll = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const subjects = await prisma.subject.findMany({
       where: { userId: req.userId },
@@ -11,7 +11,7 @@ exports.getAll = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.create = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
     const { name, description, colorIdx, schedules } = req.body;
     if (!name?.trim()) return res.status(400).json({ error: "Nombre requerido" });
@@ -30,7 +30,7 @@ exports.create = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.update = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, description, colorIdx } = req.body;
@@ -46,7 +46,7 @@ exports.update = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.remove = async (req, res, next) => {
+export const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleted = await prisma.subject.deleteMany({ where: { id: Number(id), userId: req.userId } });
@@ -56,7 +56,7 @@ exports.remove = async (req, res, next) => {
 };
 
 // ── Schedules (horarios) de una materia ────────────────────
-exports.addSchedule = async (req, res, next) => {
+export const addSchedule = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { day, startTime, endTime } = req.body;
@@ -70,7 +70,7 @@ exports.addSchedule = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.removeSchedule = async (req, res, next) => {
+export const removeSchedule = async (req, res, next) => {
   try {
     const { id, scheduleId } = req.params;
 

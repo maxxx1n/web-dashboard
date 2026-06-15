@@ -40,7 +40,7 @@ export default function Materias({ materias, tareas, onNew, onEdit, onDelete }) 
                   </div>
                 </div>
                 <div className="subject-card-name">{m.nombre}</div>
-                <div className="subject-card-desc">{m.descripcion || "Sin descripción"}</div>
+                <div className="subject-card-desc">{m.profesor || "Sin profesor"}</div>
                 <div className="subject-card-badges">
                   <span className="badge" style={{ background: "var(--bg-elevated)", color: "var(--text-muted)" }}>{total} tareas</span>
                   <span className="badge" style={{ background: "#1a3d30", color: "#34d399" }}>{hechas} hechas</span>

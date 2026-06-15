@@ -109,7 +109,7 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
                       <Bell size={13} /> {r.titulo}
                     </div>
                     {r.hora        && <div style={{ fontSize: 11, color: "#fde68a", marginTop: 2 }}>{r.hora}</div>}
-                    {r.descripcion && <div style={{ fontSize: 11, color: "#fde68a", marginTop: 2 }}>{r.descripcion}</div>}
+                    {r.nota && <div style={{ fontSize: 11, color: "#fde68a", marginTop: 2 }}>{r.nota}</div>}
                   </div>
                   <div style={{ display: "flex", gap: 4 }}>
                     <button className="icon-btn btn-accent" style={{ color: "#fbbf24" }} onClick={() => onEditRecordatorio(r)} title="Editar"><Pencil size={13} /></button>

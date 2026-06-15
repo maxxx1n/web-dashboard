@@ -1,33 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { COLORS } from "./config/constants";
-import { useStorage } from "./hooks/useStorage";
+import { subjectsApi, tasksApi, remindersApi } from "./services/api";
+import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/layout/Sidebar";
 import { MateriaModal, TareaModal, RecordatorioModal } from "./components/modals/Modals";
-import { Inicio, Materias, Horarios, Tareas, Calendario, Stats } from "./pages";
-
-const DEFAULT_MATERIAS = [
-  { id: 1, nombre: "Matemáticas", descripcion: "Álgebra y análisis",  colorIdx: 0, horarios: [{ dia: "Lunes",     inicio: "08:00", fin: "10:00" }] },
-  { id: 2, nombre: "Historia",    descripcion: "Historia universal",   colorIdx: 1, horarios: [{ dia: "Martes",    inicio: "10:00", fin: "12:00" }] },
-  { id: 3, nombre: "Física",      descripcion: "Mecánica clásica",     colorIdx: 2, horarios: [{ dia: "Miércoles", inicio: "14:00", fin: "16:00" }] },
-];
-const DEFAULT_TAREAS = [
-  { id: 1, titulo: "Ejercicios cap. 4",          materiaId: 1, prioridad: "alta",  estado: "pendiente", fecha: "2026-05-22" },
-  { id: 2, titulo: "Lectura Revolución Francesa", materiaId: 2, prioridad: "media", estado: "progreso",  fecha: "2026-05-20" },
-];
-const DEFAULT_RECORDATORIOS = [
-  { id: 1, titulo: "Estudiar para parcial", fecha: "2026-05-22", hora: "18:00", descripcion: "Repasar capítulos 1-4" },
-];
+import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil } from "./pages";
 
 const COLOR_BG   = ["#2d2b4e","#1a3d30","#3d1f1f","#1a2d4e","#3d1a2d","#3d2e0a","#1f3d0a","#2d1a3d"];
 const COLOR_TEXT  = ["#c4c0ff","#6ee7b7","#fca5a5","#93c5fd","#f9a8d4","#fde68a","#d9f99d","#e9d5ff"];
 
 export default function App() {
+  const { user, loading: authLoading, logout } = useAuth();
+  
   const [view, setView] = useState("inicio");
-  const [materias,      setMaterias]      = useStorage("materias_v2",      DEFAULT_MATERIAS);
-  const [tareas,        setTareas]        = useStorage("tareas_v2",        DEFAULT_TAREAS);
-  const [recordatorios, setRecordatorios] = useStorage("recordatorios_v2", DEFAULT_RECORDATORIOS);
+  const [materias,      setMaterias]      = useState([]);
+  const [tareas,        setTareas]        = useState([]);
+  const [recordatorios, setRecordatorios] = useState([]);
   const [modal, setModal] = useState(null);
   const [form,  setForm]  = useState({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [m, t, r] = await Promise.all([
+        subjectsApi.getAll(),
+        tasksApi.getAll(),
+        remindersApi.getAll()
+      ]);
+      setMaterias(m);
+      setTareas(t);
+      setRecordatorios(r);
+    } catch (err) {
+      console.error("Error loading data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading) return null;
+  if (!user) return <Login />;
+  if (loading) return <div className="login-container"><div className="login-title">Cargando...</div></div>;
 
   const openModal  = (type, data = {}) => { setModal(type); setForm(data); };
   const closeModal = () => { setModal(null); setForm({}); };
@@ -40,65 +59,112 @@ export default function App() {
   const getMNombre = id => getM(id)?.nombre || "Sin materia";
 
   // ── CRUD Materias ─────────────────────────────────────────────────────────
-  const saveMateria = () => {
+  const saveMateria = async () => {
     if (!form.nombre?.trim()) return;
-    if (form.id) setMaterias(m => m.map(x => x.id === form.id ? { ...x, ...form } : x));
-    else setMaterias(m => [...m, { ...form, id: Date.now(), colorIdx: m.length % COLORS.length, horarios: [] }]);
-    closeModal();
+    try {
+      if (form.id) {
+        const updated = await subjectsApi.update(form.id, form);
+        setMaterias(m => m.map(x => x.id === form.id ? updated : x));
+      } else {
+        const colorIdx = form.colorIdx !== undefined ? form.colorIdx : materias.length % COLORS.length;
+        const created = await subjectsApi.create({ ...form, colorIdx });
+        setMaterias(m => [created, ...m]);
+      }
+      closeModal();
+    } catch (err) { alert(err.message); }
   };
 
-  /**
-   * Confirmación antes de borrar una materia.
-   * Advierte que también se eliminarán las tareas asociadas (borrado en cascada).
-   */
-  const delMateria = id => {
+  const delMateria = async id => {
     const m = materias.find(x => x.id === id);
     const tareasAsociadas = tareas.filter(t => t.materiaId === id).length;
     const msg = tareasAsociadas > 0
       ? `¿Eliminar la materia "${m?.nombre}"?\n\nEsto también borrará ${tareasAsociadas} tarea(s) asociada(s). Esta acción no se puede deshacer.`
       : `¿Eliminar la materia "${m?.nombre}"? Esta acción no se puede deshacer.`;
     if (!window.confirm(msg)) return;
-    setMaterias(prev => prev.filter(x => x.id !== id));
-    setTareas(prev => prev.filter(x => x.materiaId !== id));
+    
+    try {
+      await subjectsApi.remove(id);
+      setMaterias(prev => prev.filter(x => x.id !== id));
+      setTareas(prev => prev.filter(x => x.materiaId !== id));
+    } catch (err) { alert(err.message); }
   };
 
   // ── CRUD Horarios ─────────────────────────────────────────────────────────
-  const addHorario = (materiaId, hf) =>
-    setMaterias(m => m.map(x => x.id === materiaId ? { ...x, horarios: [...(x.horarios || []), { ...hf }] } : x));
+  const addHorario = async (materiaId, hf) => {
+    try {
+      const added = await subjectsApi.addSchedule(materiaId, hf);
+      setMaterias(m => m.map(x => x.id === materiaId ? { ...x, horarios: [...(x.horarios || []), added] } : x));
+    } catch (err) { alert(err.message); }
+  };
 
-  const delHorario = (materiaId, idx) =>
-    setMaterias(m => m.map(x => x.id === materiaId ? { ...x, horarios: x.horarios.filter((_, i) => i !== idx) } : x));
+  const delHorario = async (materiaId, scheduleId) => {
+    try {
+      await subjectsApi.removeSchedule(materiaId, scheduleId);
+      setMaterias(m => m.map(x => x.id === materiaId ? { ...x, horarios: x.horarios.filter(h => h.id !== scheduleId) } : x));
+    } catch (err) { alert(err.message); }
+  };
 
   // ── CRUD Tareas ───────────────────────────────────────────────────────────
-  const saveTarea = () => {
+  const saveTarea = async () => {
     if (!form.titulo?.trim()) return;
-    if (form.id) setTareas(t => t.map(x => x.id === form.id ? { ...x, ...form } : x));
-    else setTareas(t => [...t, { ...form, id: Date.now(), estado: form.estado || "pendiente" }]);
-    closeModal();
+    try {
+      if (form.id) {
+        const updated = await tasksApi.update(form.id, form);
+        setTareas(t => t.map(x => x.id === form.id ? updated : x));
+      } else {
+        const created = await tasksApi.create({ ...form, estado: form.estado || "pendiente" });
+        setTareas(t => [created, ...t]);
+      }
+      closeModal();
+    } catch (err) { alert(err.message); }
   };
 
-  /** Confirmación antes de borrar una tarea. */
-  const delTarea = id => {
+  const delTarea = async id => {
     const t = tareas.find(x => x.id === id);
     if (!window.confirm(`¿Eliminar la tarea "${t?.titulo}"? Esta acción no se puede deshacer.`)) return;
-    setTareas(prev => prev.filter(x => x.id !== id));
+    try {
+      await tasksApi.remove(id);
+      setTareas(prev => prev.filter(x => x.id !== id));
+    } catch (err) { alert(err.message); }
   };
 
-  const setEstado = (id, estado) => setTareas(t => t.map(x => x.id === id ? { ...x, estado } : x));
+  const setEstado = async (id, estado) => {
+    try {
+      await tasksApi.updateStatus(id, estado);
+      setTareas(t => t.map(x => x.id === id ? { ...x, estado } : x));
+    } catch (err) { alert(err.message); }
+  };
 
   // ── CRUD Recordatorios ────────────────────────────────────────────────────
-  const saveRecordatorio = () => {
+  const saveRecordatorio = async () => {
     if (!form.titulo?.trim() || !form.fecha) return;
-    if (form.id) setRecordatorios(r => r.map(x => x.id === form.id ? { ...x, ...form } : x));
-    else setRecordatorios(r => [...r, { ...form, id: Date.now() }]);
-    closeModal();
+    try {
+      if (form.id) {
+        const updated = await remindersApi.update(form.id, form);
+        setRecordatorios(r => r.map(x => x.id === form.id ? updated : x));
+      } else {
+        const created = await remindersApi.create(form);
+        setRecordatorios(r => [...r, created]);
+      }
+      closeModal();
+    } catch (err) { alert(err.message); }
   };
 
-  /** Confirmación antes de borrar un recordatorio. */
-  const delRecordatorio = id => {
+  const delRecordatorio = async id => {
     const r = recordatorios.find(x => x.id === id);
     if (!window.confirm(`¿Eliminar el recordatorio "${r?.titulo}"?`)) return;
-    setRecordatorios(prev => prev.filter(x => x.id !== id));
+    try {
+      await remindersApi.remove(id);
+      setRecordatorios(prev => prev.filter(x => x.id !== id));
+    } catch (err) { alert(err.message); }
+  };
+
+  // Adapting the horariodelete method to pass schedule id instead of index
+  const adaptedDelHorario = (materiaId, idx) => {
+    const m = materias.find(x => x.id === materiaId);
+    if (m && m.horarios && m.horarios[idx]) {
+      delHorario(materiaId, m.horarios[idx].id);
+    }
   };
 
   return (
@@ -108,10 +174,19 @@ export default function App() {
         <main className="main-content">
           {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} openTarea={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} />}
           {view === "materias"   && <Materias   materias={materias} tareas={tareas} onNew={() => openModal("materia", { horarios: [] })} onEdit={m => openModal("materia", { ...m })} onDelete={delMateria} />}
-          {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={delHorario} />}
+          {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={adaptedDelHorario} />}
           {view === "tareas"     && <Tareas     tareas={tareas} materias={materias} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} onNew={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} onEdit={t => openModal("tarea", { ...t })} onDelete={delTarea} />}
           {view === "calendario" && <Calendario tareas={tareas} recordatorios={recordatorios} getMColor={getMColor} getMBg={getMBg} getMText={getMText} getMNombre={getMNombre} onNewRecordatorio={data => openModal("recordatorio", data)} onEditRecordatorio={r => openModal("recordatorio", { ...r })} onDelRecordatorio={delRecordatorio} />}
           {view === "stats"      && <Stats      tareas={tareas} materias={materias} getMColor={getMColor} getMNombre={getMNombre} />}
+          {view === "perfil"     && <Perfil     user={user} logout={logout} />}
+          
+          <div 
+            className="profile-fab" 
+            onClick={() => setView("perfil")}
+            title="Mi Perfil"
+          >
+            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+          </div>
         </main>
       </div>
 

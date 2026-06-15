@@ -11,9 +11,9 @@ export function MateriaModal({ form, setForm, onSave, onClose }) {
         <input className="input" value={form.nombre || ""} placeholder="Ej: Matemáticas"
           onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} autoFocus />
 
-        <label className="label">Descripción</label>
-        <input className="input" value={form.descripcion || ""} placeholder="Ej: Álgebra lineal"
-          onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))} />
+        <label className="label">Profesor</label>
+        <input className="input" value={form.profesor || ""} placeholder="Ej: Matias"
+          onChange={e => setForm(f => ({ ...f, profesor: e.target.value }))} />
 
         <label className="label">Color</label>
         <div className="color-picker">
@@ -112,9 +112,9 @@ export function RecordatorioModal({ form, setForm, onSave, onClose }) {
         <input type="time" className="input" value={form.hora || ""}
           onChange={e => setForm(f => ({ ...f, hora: e.target.value }))} />
 
-        <label className="label">Descripción (opcional)</label>
-        <input className="input" value={form.descripcion || ""} placeholder="Notas adicionales..."
-          onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))} />
+        <label className="label">Nota (opcional)</label>
+        <input className="input" value={form.nota || ""} placeholder="Notas adicionales..."
+          onChange={e => setForm(f => ({ ...f, nota: e.target.value }))} />
 
         <div className="modal-actions">
           <button className="btn-ghost" onClick={onClose}>Cancelar</button>

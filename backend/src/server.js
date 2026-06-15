@@ -1,14 +1,14 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const authMiddleware = require("./middleware/auth");
-const errorHandler = require("./middleware/errorHandler");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import authMiddleware from "./middleware/auth.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 // Rutas
-const authRoutes     = require("./routes/auth");
-const subjectRoutes  = require("./routes/subjects");
-const taskRoutes     = require("./routes/tasks");
-const reminderRoutes = require("./routes/reminders");
+import authRoutes from "./routes/auth.js";
+import subjectRoutes from "./routes/subjects.js";
+import taskRoutes from "./routes/tasks.js";
+import reminderRoutes from "./routes/reminders.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

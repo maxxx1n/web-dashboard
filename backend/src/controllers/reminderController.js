@@ -1,6 +1,6 @@
-const prisma = require("../config/db");
+import prisma from "../config/db.js";
 
-exports.getAll = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const reminders = await prisma.reminder.findMany({
       where: { userId: req.userId },
@@ -10,7 +10,7 @@ exports.getAll = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.create = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
     const { title, date, time, description } = req.body;
     if (!title?.trim() || !date) return res.status(400).json({ error: "Título y fecha requeridos" });
@@ -22,7 +22,7 @@ exports.create = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.update = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, date, time, description } = req.body;
@@ -38,7 +38,7 @@ exports.update = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.remove = async (req, res, next) => {
+export const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleted = await prisma.reminder.deleteMany({ where: { id: Number(id), userId: req.userId } });

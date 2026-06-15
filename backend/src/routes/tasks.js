@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const ctrl = require("../controllers/taskController");
+import { Router } from "express";
+import * as ctrl from "../controllers/taskController.js";
 
 const router = Router();
 
@@ -9,4 +9,4 @@ router.put("/:id", ctrl.update);
 router.delete("/:id", ctrl.remove);
 router.patch("/:id/status", ctrl.updateStatus);
 
-module.exports = router;
+export default router;

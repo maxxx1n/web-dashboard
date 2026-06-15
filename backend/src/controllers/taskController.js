@@ -1,6 +1,6 @@
-const prisma = require("../config/db");
+import prisma from "../config/db.js";
 
-exports.getAll = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const tasks = await prisma.task.findMany({
       where: { userId: req.userId },
@@ -11,7 +11,7 @@ exports.getAll = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.create = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
     const { title, priority, status, dueDate, subjectId } = req.body;
     if (!title?.trim()) return res.status(400).json({ error: "Título requerido" });
@@ -24,7 +24,7 @@ exports.create = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.update = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, priority, status, dueDate, subjectId } = req.body;
@@ -43,7 +43,7 @@ exports.update = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.remove = async (req, res, next) => {
+export const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleted = await prisma.task.deleteMany({ where: { id: Number(id), userId: req.userId } });
@@ -52,7 +52,7 @@ exports.remove = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-exports.updateStatus = async (req, res, next) => {
+export const updateStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
