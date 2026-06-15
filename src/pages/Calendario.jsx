@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Bell, Pencil, Trash2, Plus, X } from "lucide-react";
-import { dark, MESES } from "../config/constants";
+import { MESES } from "../config/constants";
 import { pad, todayStr } from "../utils/helpers";
-import { btnPrimary, badge, iconBtn } from "../config/theme";
 
 export default function Calendario({ tareas, recordatorios, getMColor, getMBg, getMText, getMNombre, onNewRecordatorio, onEditRecordatorio, onDelRecordatorio }) {
   const today = new Date();
@@ -13,8 +12,8 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
   const prevMes = () => { let m = calMes-1, y = calAnio; if(m<0){m=11;y--;} setCalMes(m); setCalAnio(y); setCalDia(null); };
   const nextMes = () => { let m = calMes+1, y = calAnio; if(m>11){m=0;y++;} setCalMes(m); setCalAnio(y); setCalDia(null); };
 
-  const dateStr    = d => `${calAnio}-${pad(calMes+1)}-${pad(d)}`;
-  const isToday    = d => dateStr(d) === todayStr;
+  const dateStr     = d => `${calAnio}-${pad(calMes+1)}-${pad(d)}`;
+  const isToday     = d => dateStr(d) === todayStr;
   const tareasEnDia = d => tareas.filter(t => t.fecha === dateStr(d));
   const recEnDia    = d => recordatorios.filter(r => r.fecha === dateStr(d));
 
@@ -32,82 +31,79 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
   const recDia    = calDia ? recEnDia(calDia)    : [];
   const diaSelStr = calDia ? dateStr(calDia)      : null;
 
-  const navBtn = { background: dark.card, border: `1.5px solid ${dark.border}`, color: dark.text, borderRadius: 8, width: 34, height: 34, cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" };
-
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 26 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0, color: "#eaeaf5" }}>Calendario</h1>
+      <div className="page-header">
+        <h1 className="page-title">Calendario</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button className="btn-primary" style={{ ...btnPrimary, fontSize: 13, padding: "9px 16px", display: "flex", alignItems: "center", gap: 6 }}
+          <button className="btn-primary" style={{ fontSize: 13, padding: "9px 16px" }}
             onClick={() => onNewRecordatorio({ fecha: todayStr, hora: "09:00" })}>
             <Bell size={14} /> Nuevo Recordatorio
           </button>
-          <button className="btn-ghost" style={navBtn} onClick={prevMes}>‹</button>
+          <button className="nav-btn" onClick={prevMes}>‹</button>
           <span style={{ fontWeight: 600, fontSize: 15, minWidth: 150, textAlign: "center" }}>{MESES[calMes]} {calAnio}</span>
-          <button className="btn-ghost" style={navBtn} onClick={nextMes}>›</button>
+          <button className="nav-btn" onClick={nextMes}>›</button>
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: calDia ? "1fr 300px" : "1fr", gap: 18 }}>
-        {/* Grilla */}
-        <div style={{ background: dark.card, borderRadius: 16, border: `1.5px solid ${dark.border}`, overflow: "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", background: dark.subtle, borderBottom: `1.5px solid ${dark.border}` }}>
+        {/* Calendar grid */}
+        <div className="cal-container">
+          <div className="cal-weekdays">
             {["Lu","Ma","Mi","Ju","Vi","Sa","Do"].map(d => (
-              <div key={d} style={{ padding: "11px 0", textAlign: "center", fontSize: 11, fontWeight: 700, color: dark.muted, letterSpacing: 0.5 }}>{d}</div>
+              <div key={d} className="cal-weekday">{d}</div>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
+          <div className="cal-grid">
             {dias.map((d, i) => {
-              const tt  = d ? tareasEnDia(d) : [];
-              const rr  = d ? recEnDia(d)    : [];
-              const sel = d && calDia === d;
-              const tod = d && isToday(d);
+              if (!d) return <div key={i} className="cal-cell" />;
+              const tt  = tareasEnDia(d);
+              const rr  = recEnDia(d);
+              const sel = calDia === d;
+              const tod = isToday(d);
               return (
-                <div key={i} className={d ? "cal-day" : ""}
-                  onClick={() => d && setCalDia(calDia === d ? null : d)}
-                  style={{ minHeight: 82, padding: "8px 6px", borderRight: (i+1)%7!==0 ? `1px solid ${dark.border}` : "none", borderBottom: `1px solid ${dark.border}`, background: sel ? "#2d2b4e" : tod ? "#1e1e30" : "transparent", cursor: d ? "pointer" : "default" }}>
-                  {d && <>
-                    <div style={{ fontSize: 13, fontWeight: tod ? 700 : 400, color: tod ? "#9d96f0" : sel ? "#c4c0ff" : dark.text, marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>
-                      {d}
-                      {tod && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#9d96f0", display: "inline-block" }} />}
-                    </div>
-                    {tt.slice(0,1).map(t => (
-                      <div key={t.id} style={{ fontSize: 10, background: getMColor(t.materiaId), color: "#0c0c10", borderRadius: 4, padding: "2px 5px", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: 600 }}>{t.titulo}</div>
-                    ))}
-                    {rr.slice(0,1).map(r => (
-                      <div key={r.id} style={{ fontSize: 10, background: "#3d2e0a", color: "#fbbf24", borderRadius: 4, padding: "2px 5px", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔔 {r.titulo}</div>
-                    ))}
-                    {(tt.length + rr.length) > 2 && <div style={{ fontSize: 10, color: dark.muted }}>+{tt.length + rr.length - 2} más</div>}
-                  </>}
+                <div key={i}
+                  className={`cal-cell is-day${tod ? " is-today" : ""}${sel ? " is-selected" : ""}`}
+                  onClick={() => setCalDia(calDia === d ? null : d)}>
+                  <div className={`cal-day-num${tod ? " today" : ""}`} style={{ color: sel && !tod ? "var(--accent-soft)" : undefined }}>
+                    {d}
+                    {tod && <span className="cal-today-dot" />}
+                  </div>
+                  {tt.slice(0,1).map(t => (
+                    <div key={t.id} className="cal-event-pill" style={{ background: getMColor(t.materiaId), color: "#0c0c10" }}>{t.titulo}</div>
+                  ))}
+                  {rr.slice(0,1).map(r => (
+                    <div key={r.id} className="cal-event-pill" style={{ background: "#3d2e0a", color: "#fbbf24" }}>🔔 {r.titulo}</div>
+                  ))}
+                  {(tt.length + rr.length) > 2 && <div style={{ fontSize: 10, color: "var(--text-muted)" }}>+{tt.length + rr.length - 2} más</div>}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Panel lateral */}
+        {/* Side panel */}
         {calDia && (
-          <div style={{ background: dark.card, borderRadius: 16, border: `1.5px solid ${dark.border}`, padding: 20, display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div className="cal-sidebar">
+            <div className="cal-sidebar-header" style={{ marginBottom: 16 }}>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 16 }}>{calDia} de {MESES[calMes]}</div>
-                <div style={{ fontSize: 12, color: dark.muted }}>{tareasDia.length + recDia.length} eventos</div>
+                <div className="cal-sidebar-title">{calDia} de {MESES[calMes]}</div>
+                <div className="cal-sidebar-count">{tareasDia.length + recDia.length} eventos</div>
               </div>
-              <button className="icon-btn" style={iconBtn(dark.muted)} onClick={() => setCalDia(null)} title="Cerrar">
+              <button className="icon-btn" style={{ color: "var(--text-muted)" }} onClick={() => setCalDia(null)} title="Cerrar">
                 <X size={16} />
               </button>
             </div>
 
-            <button className="btn-primary" style={{ ...btnPrimary, fontSize: 12, padding: "8px 14px", marginBottom: 16, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+            <button className="btn-primary" style={{ fontSize: 12, padding: "8px 14px", marginBottom: 16, width: "100%", justifyContent: "center" }}
               onClick={() => onNewRecordatorio({ fecha: diaSelStr, hora: "09:00" })}>
               <Plus size={14} /> Nuevo Recordatorio para este día
             </button>
 
             {recDia.length > 0 && <>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#fbbf24", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Recordatorios</div>
+              <div className="cal-section-label" style={{ color: "#fbbf24" }}>Recordatorios</div>
               {recDia.map(r => (
-                <div key={r.id} style={{ background: "#3d2e0a", borderRadius: 10, padding: "10px 12px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div key={r.id} className="cal-reminder" style={{ background: "rgba(251,191,36,0.1)" }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#fbbf24", display: "flex", alignItems: "center", gap: 6 }}>
                       <Bell size={13} /> {r.titulo}
@@ -116,27 +112,27 @@ export default function Calendario({ tareas, recordatorios, getMColor, getMBg, g
                     {r.descripcion && <div style={{ fontSize: 11, color: "#fde68a", marginTop: 2 }}>{r.descripcion}</div>}
                   </div>
                   <div style={{ display: "flex", gap: 4 }}>
-                    <button className="icon-btn btn-accent" style={iconBtn("#fbbf24")} onClick={() => onEditRecordatorio(r)} title="Editar"><Pencil size={13} /></button>
-                    <button className="icon-btn btn-danger" style={iconBtn("#f87171")} onClick={() => onDelRecordatorio(r.id)} title="Eliminar"><Trash2 size={13} /></button>
+                    <button className="icon-btn btn-accent" style={{ color: "#fbbf24" }} onClick={() => onEditRecordatorio(r)} title="Editar"><Pencil size={13} /></button>
+                    <button className="icon-btn btn-danger" style={{ color: "#f87171" }} onClick={() => onDelRecordatorio(r.id)} title="Eliminar"><Trash2 size={13} /></button>
                   </div>
                 </div>
               ))}
             </>}
 
             {tareasDia.length > 0 && <>
-              <div style={{ fontSize: 11, fontWeight: 700, color: dark.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: recDia.length ? 8 : 0 }}>Tareas</div>
+              <div className="cal-section-label" style={{ color: "var(--text-muted)", marginTop: recDia.length ? 8 : 0 }}>Tareas</div>
               {tareasDia.map(t => (
-                <div key={t.id} style={{ background: dark.subtle, borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
+                <div key={t.id} className="cal-task">
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{t.titulo}</div>
                   <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-                    <span style={badge(getMBg(t.materiaId), getMText(t.materiaId))}>{getMNombre(t.materiaId)}</span>
+                    <span className="badge" style={{ background: getMBg(t.materiaId), color: getMText(t.materiaId) }}>{getMNombre(t.materiaId)}</span>
                   </div>
                 </div>
               ))}
             </>}
 
             {tareasDia.length === 0 && recDia.length === 0 && (
-              <div style={{ color: dark.muted, fontSize: 13, textAlign: "center", marginTop: 20 }}>Sin eventos este día.</div>
+              <div style={{ color: "var(--text-muted)", fontSize: 13, textAlign: "center", marginTop: 20 }}>Sin eventos este día.</div>
             )}
           </div>
         )}

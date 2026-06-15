@@ -16,16 +16,3 @@ export const STATUS = {
 
 export const DIAS_SEMANA = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
 export const MESES       = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-
-export const dark = {
-  bg:          "#0c0c10",
-  surface:     "#13131a",
-  card:        "#18181f",
-  cardHover:   "#1e1e28",
-  border:      "#252535",
-  borderHover: "#3a3a50",
-  text:        "#eaeaf5",
-  muted:       "#7070a0",
-  subtle:      "#1e1e2a",
-  accent:      "#9d96f0",
-};
