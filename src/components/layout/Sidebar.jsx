@@ -5,6 +5,7 @@ import {
   CheckSquare,
   Calendar,
   BarChart3,
+  LifeBuoy
 } from "lucide-react";
 import { TODAY } from "../../utils/helpers";
 
@@ -15,6 +16,7 @@ const NAV = [
   { id: "tareas",     icon: CheckSquare,     label: "Tareas"       },
   { id: "calendario", icon: Calendar,        label: "Calendario"   },
   { id: "stats",      icon: BarChart3,       label: "Estadísticas" },
+  { id: "soporte",    icon: LifeBuoy,        label: "Soporte"      },
 ];
 
 export default function Sidebar({ view, setView, tareas = [] }) {

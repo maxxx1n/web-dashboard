@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -20,6 +20,7 @@ model User {
   subjects  Subject[]
   tasks     Task[]
   reminders Reminder[]
+  reports   Report[]
 
   @@map("users")
 }
@@ -82,4 +83,18 @@ model Reminder {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reminders")
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  subject     String
+  description String
+  status      String   @default("Abierto")
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reports")
 }

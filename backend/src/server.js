@@ -10,6 +10,7 @@ import subjectRoutes from "./routes/subjects.js";
 import taskRoutes from "./routes/tasks.js";
 import reminderRoutes from "./routes/reminders.js";
 import userRoutes from "./routes/users.js";
+import supportRoutes from "./routes/support.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,6 +27,7 @@ app.use("/api/subjects",  authMiddleware, subjectRoutes);
 app.use("/api/tasks",     authMiddleware, taskRoutes);
 app.use("/api/reminders", authMiddleware, reminderRoutes);
 app.use("/api/users",     authMiddleware, userRoutes);
+app.use("/api/support",   authMiddleware, supportRoutes);
 
 // ── Health check ───────────────────────────────────────────
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));

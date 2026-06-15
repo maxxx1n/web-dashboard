@@ -270,3 +270,9 @@ export const usersApi = {
     fetchApi(`/users/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: estado }) }),
   remove: (id) => fetchApi(`/users/${id}`, { method: "DELETE" }),
 };
+
+// ── Soporte (Support) ─────────────────────────────────────────────
+export const supportApi = {
+  create: async (data) => fetchApi("/support", { method: "POST", body: JSON.stringify(data) }),
+  getAll: async () => fetchApi("/support"),
+};

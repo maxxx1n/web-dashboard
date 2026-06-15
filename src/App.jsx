@@ -4,7 +4,7 @@ import { subjectsApi, tasksApi, remindersApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/layout/Sidebar";
 import { MateriaModal, TareaModal, RecordatorioModal } from "./components/modals/Modals";
-import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil, Admin } from "./pages";
+import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil, Admin, Soporte } from "./pages";
 
 export default function App() {
   const { user, loading: authLoading, logout, updateProfile } = useAuth();
@@ -175,6 +175,7 @@ export default function App() {
           {view === "tareas"     && <Tareas     tareas={tareas} materias={materias} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} onNew={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} onEdit={t => openModal("tarea", { ...t })} onDelete={delTarea} />}
           {view === "calendario" && <Calendario tareas={tareas} recordatorios={recordatorios} getMColor={getMColor} getMBg={getMBg} getMText={getMText} getMNombre={getMNombre} onNewRecordatorio={data => openModal("recordatorio", data)} onEditRecordatorio={r => openModal("recordatorio", { ...r })} onDelRecordatorio={delRecordatorio} />}
           {view === "stats"      && <Stats      tareas={tareas} materias={materias} getMColor={getMColor} getMNombre={getMNombre} />}
+          {view === "soporte"    && <Soporte />}
           {view === "perfil"     && <Perfil     user={user} logout={logout} updateProfile={updateProfile} />}
           {view === "admin"      && <Admin      user={user} />}
           

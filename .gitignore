@@ -37,5 +37,7 @@ dist-ssr
 prisma/migrations
 prisma/generated
 
-# Build output
-
+# Documentation
+.env.local
+.env.example
+ESTADO_PROYECTO.md
