@@ -7,7 +7,8 @@ import {
   Timer,
   BarChart3,
 } from "lucide-react";
-import { dark, TODAY } from "../constants";
+import { dark } from "../../config/constants";
+import { TODAY } from "../../utils/helpers";
 
 const NAV = [
   { id: "inicio",     icon: LayoutDashboard, label: "Inicio"       },

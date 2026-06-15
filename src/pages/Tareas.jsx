@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Play, CheckCheck, Filter, X } from "lucide-react";
-import { dark, PRIORITY, STATUS } from "../constants";
-import { btnPrimary, badge, iconBtn } from "../styles/shared";
+import { dark, PRIORITY, STATUS } from "../config/constants";
+import { btnPrimary, badge, iconBtn } from "../config/theme";
 
 export default function Tareas({ tareas, materias, getMNombre, getMBg, getMText, setEstado, onNew, onEdit, onDelete }) {
   const [filtroMateria,  setFiltroMateria]  = useState("");

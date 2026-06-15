@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { COLORS, COLOR_BG, COLOR_TEXT, dark } from "./constants";
+import { COLORS, COLOR_BG, COLOR_TEXT, dark } from "./config/constants";
 import { useStorage } from "./hooks/useStorage";
-import Sidebar from "./components/Sidebar";
-import { MateriaModal, TareaModal, RecordatorioModal } from "./components/Modals";
-import { Inicio, Materias, Horarios, Tareas, Calendario,Stats } from "./views";
+import Sidebar from "./components/layout/Sidebar";
+import { MateriaModal, TareaModal, RecordatorioModal } from "./components/modals/Modals";
+import { Inicio, Materias, Horarios, Tareas, Calendario,Stats } from "./pages";
 
 const DEFAULT_MATERIAS = [
   { id: 1, nombre: "Matemáticas", descripcion: "Álgebra y análisis",  colorIdx: 0, horarios: [{ dia: "Lunes",     inicio: "08:00", fin: "10:00" }] },

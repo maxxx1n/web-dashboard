@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2, Plus } from "lucide-react";
-import { COLORS, COLOR_BG, COLOR_TEXT, DIAS_SEMANA, dark } from "../constants";
-import { inputStyle, btnPrimary, iconBtn } from "../styles/shared";
+import { COLORS, COLOR_BG, COLOR_TEXT, DIAS_SEMANA, dark } from "../config/constants";
+import { inputStyle, btnPrimary, iconBtn } from "../config/theme";
 
 export default function Horarios({ materias, onAddHorario, onDelHorario }) {
   const [form, setForm] = useState({ dia: "Lunes", inicio: "08:00", fin: "09:00" });

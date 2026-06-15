@@ -1,6 +1,6 @@
 import { Pencil, Trash2, Plus } from "lucide-react";
-import { COLORS, COLOR_BG, dark } from "../constants";
-import { btnPrimary, badge, iconBtn } from "../styles/shared";
+import { COLORS, COLOR_BG, dark } from "../config/constants";
+import { btnPrimary, badge, iconBtn } from "../config/theme";
 
 export default function Materias({ materias, tareas, onNew, onEdit, onDelete }) {
   return (

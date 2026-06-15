@@ -1,5 +1,5 @@
-import { dark, PRIORITY } from "../constants";
-import { card, badge } from "../styles/shared";
+import { dark, PRIORITY } from "../config/constants";
+import { card, badge } from "../config/theme";
 
 export default function Stats({ tareas, materias, getMColor, getMNombre }) {
   const total      = tareas.length;

@@ -1,5 +1,6 @@
-import { dark, PRIORITY, TODAY, todayStr } from "../constants";
-import { card, badge, btnPrimary } from "../styles/shared";
+import { dark, PRIORITY } from "../config/constants";
+import { TODAY, todayStr } from "../utils/helpers";
+import { card, badge, btnPrimary } from "../config/theme";
 
 export default function Inicio({ tareas, materias, recordatorios, getMNombre, getMBg, getMText, setEstado, openTarea }) {
   const pendientes = tareas.filter(t => t.estado !== "hecha").length;

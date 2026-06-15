@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Bell, Pencil, Trash2, Plus, X } from "lucide-react";
-import { dark, MESES, pad, todayStr } from "../constants";
-import { btnPrimary, badge, iconBtn } from "../styles/shared";
+import { dark, MESES } from "../config/constants";
+import { pad, todayStr } from "../utils/helpers";
+import { btnPrimary, badge, iconBtn } from "../config/theme";
 
 export default function Calendario({ tareas, recordatorios, getMColor, getMBg, getMText, getMNombre, onNewRecordatorio, onEditRecordatorio, onDelRecordatorio }) {
   const today = new Date();

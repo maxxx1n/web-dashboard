@@ -1,5 +1,5 @@
-import { COLORS, dark, STATUS } from "../constants";
-import { inputStyle, labelStyle, btnPrimary, btnGhost } from "../styles/shared";
+import { COLORS, dark, STATUS } from "../../config/constants";
+import { inputStyle, labelStyle, btnPrimary, btnGhost } from "../../config/theme";
 
 const overlay = {
   position: "fixed", inset: 0,
