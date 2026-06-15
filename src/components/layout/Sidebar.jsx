@@ -27,7 +27,7 @@ export default function Sidebar({ view, setView, tareas = [] }) {
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">📚</div>
           <div>
-            <div className="sidebar-logo-text">StudyDesk</div>
+            <div className="sidebar-logo-text">Organizador de Estudio</div>
             <div className="sidebar-logo-sub">Panel de estudio</div>
           </div>
         </div>

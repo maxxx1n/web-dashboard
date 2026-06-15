@@ -1,7 +1,9 @@
 import { PRIORITY } from "../config/constants";
 import { TODAY, todayStr } from "../utils/helpers";
+import { useState } from "react";
 
-export default function Inicio({ tareas, materias, recordatorios, getMNombre, getMBg, getMText, setEstado, openTarea }) {
+export default function Inicio({ tareas, materias, recordatorios, getMNombre, getMBg, getMText, setEstado, user, goToProfile, logout }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const pendientes = tareas.filter(t => t.estado !== "hecha").length;
   const hechas     = tareas.filter(t => t.estado === "hecha").length;
   const hoy        = tareas.filter(t => t.fecha === todayStr && t.estado !== "hecha");
@@ -18,13 +20,28 @@ export default function Inicio({ tareas, materias, recordatorios, getMNombre, ge
           <div className="welcome-date">
             {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </div>
-          <h1 className="welcome-title">{saludo} Max</h1>
+          <h1 className="welcome-title">{saludo} {user?.name?.split(" ")[0] || "Usuario"}</h1>
           <p className="welcome-summary">
             Tenés <strong style={{ color: "var(--accent)" }}>{pendientes}</strong> tarea{pendientes !== 1 ? "s" : ""} pendiente{pendientes !== 1 ? "s" : ""}.
             {hoy.length > 0 && <> <strong style={{ color: "var(--danger)" }}>{hoy.length}</strong> vence{hoy.length !== 1 ? "n" : ""} hoy.</>}
           </p>
         </div>
-        <button className="btn-primary" onClick={openTarea}>+ Nueva tarea</button>
+        <div style={{ position: 'relative' }}>
+          <div 
+            className="profile-fab" 
+            style={{ position: 'relative', bottom: 'auto', right: 'auto', margin: 0, zIndex: 1 }}
+            onClick={() => setMenuOpen(!menuOpen)}
+            title="Mi Perfil"
+          >
+            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+          </div>
+          {menuOpen && (
+            <div className="profile-dropdown">
+              <button className="dropdown-item" onClick={goToProfile}>Mi Perfil</button>
+              <button className="dropdown-item danger" onClick={logout}>Cerrar Sesión</button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Métricas */}

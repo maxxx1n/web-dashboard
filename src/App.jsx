@@ -172,7 +172,7 @@ export default function App() {
       <div className="app-layout">
         <Sidebar view={view} setView={setView} tareas={tareas} />
         <main className="main-content">
-          {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} openTarea={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} />}
+          {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} user={user} goToProfile={() => setView("perfil")} logout={logout} />}
           {view === "materias"   && <Materias   materias={materias} tareas={tareas} onNew={() => openModal("materia", { horarios: [] })} onEdit={m => openModal("materia", { ...m })} onDelete={delMateria} />}
           {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={adaptedDelHorario} />}
           {view === "tareas"     && <Tareas     tareas={tareas} materias={materias} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} onNew={() => openModal("tarea", { prioridad: "media", estado: "pendiente" })} onEdit={t => openModal("tarea", { ...t })} onDelete={delTarea} />}
@@ -180,13 +180,7 @@ export default function App() {
           {view === "stats"      && <Stats      tareas={tareas} materias={materias} getMColor={getMColor} getMNombre={getMNombre} />}
           {view === "perfil"     && <Perfil     user={user} logout={logout} />}
           
-          <div 
-            className="profile-fab" 
-            onClick={() => setView("perfil")}
-            title="Mi Perfil"
-          >
-            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-          </div>
+
         </main>
       </div>
 

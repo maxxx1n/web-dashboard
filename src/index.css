@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   StudyDesk — Design System
+   Organizador de Estudio — Design System
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -168,6 +168,42 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(.5)}
 .profile-fab:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 30px var(--accent-glow);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px;
+  min-width: 150px;
+  box-shadow: var(--sh-md);
+  z-index: 100;
+  animation: fadeInUp 0.2s ease;
+}
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: var(--t-fast);
+}
+.dropdown-item:hover {
+  background: var(--bg-elevated);
+}
+.dropdown-item.danger {
+  color: var(--danger);
+}
+.dropdown-item.danger:hover {
+  background: var(--danger-bg);
 }
 
 /* ── Cards ─────────────────────────────────────────────────────────────── */

@@ -30,8 +30,8 @@ export default function Login() {
     <div className="login-container">
       <div className="login-box">
         <div className="login-header">
-          <div className="login-logo">S</div>
-          <h1 className="login-title">Studydesk</h1>
+          <div className="login-logo">📚</div>
+          <h1 className="login-title">Organizador de Estudio</h1>
           <p className="login-subtitle">
             {isLogin ? "Inicia sesión para continuar" : "Crea tu cuenta"}
           </p>
