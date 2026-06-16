@@ -3,19 +3,22 @@ import { COLORS, COLOR_BG, COLOR_TEXT } from "./config/constants";
 import { subjectsApi, tasksApi, remindersApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/layout/Sidebar";
-import { MateriaModal, TareaModal, RecordatorioModal } from "./components/modals/Modals";
+import { MateriaModal, TareaModal, RecordatorioModal, ConfirmModal } from "./components/modals/Modals";
 import { Inicio, Materias, Horarios, Tareas, Calendario, Stats, Login, Perfil, Admin, Soporte } from "./pages";
 
 export default function App() {
   const { user, loading: authLoading, logout, updateProfile } = useAuth();
   
   const [view, setView] = useState("inicio");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [materias,      setMaterias]      = useState([]);
   const [tareas,        setTareas]        = useState([]);
   const [recordatorios, setRecordatorios] = useState([]);
   const [modal, setModal] = useState(null);
   const [form,  setForm]  = useState({});
   const [loading, setLoading] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -71,19 +74,25 @@ export default function App() {
     } catch (err) { alert(err.message); }
   };
 
-  const delMateria = async id => {
+  const delMateria = id => {
     const m = materias.find(x => x.id === id);
     const tareasAsociadas = tareas.filter(t => t.materiaId === id).length;
     const msg = tareasAsociadas > 0
       ? `¿Eliminar la materia "${m?.nombre}"?\n\nEsto también borrará ${tareasAsociadas} tarea(s) asociada(s). Esta acción no se puede deshacer.`
       : `¿Eliminar la materia "${m?.nombre}"? Esta acción no se puede deshacer.`;
-    if (!window.confirm(msg)) return;
-    
-    try {
-      await subjectsApi.remove(id);
-      setMaterias(prev => prev.filter(x => x.id !== id));
-      setTareas(prev => prev.filter(x => x.materiaId !== id));
-    } catch (err) { alert(err.message); }
+      
+    setConfirmAction({
+      title: "Eliminar Materia",
+      message: msg,
+      isDanger: true,
+      onConfirm: async () => {
+        try {
+          await subjectsApi.remove(id);
+          setMaterias(prev => prev.filter(x => x.id !== id));
+          setTareas(prev => prev.filter(x => x.materiaId !== id));
+        } catch (err) { alert(err.message); }
+      }
+    });
   };
 
   // ── CRUD Horarios ─────────────────────────────────────────────────────────
@@ -116,13 +125,19 @@ export default function App() {
     } catch (err) { alert(err.message); }
   };
 
-  const delTarea = async id => {
+  const delTarea = id => {
     const t = tareas.find(x => x.id === id);
-    if (!window.confirm(`¿Eliminar la tarea "${t?.titulo}"? Esta acción no se puede deshacer.`)) return;
-    try {
-      await tasksApi.remove(id);
-      setTareas(prev => prev.filter(x => x.id !== id));
-    } catch (err) { alert(err.message); }
+    setConfirmAction({
+      title: "Eliminar Tarea",
+      message: `¿Eliminar la tarea "${t?.titulo}"? Esta acción no se puede deshacer.`,
+      isDanger: true,
+      onConfirm: async () => {
+        try {
+          await tasksApi.remove(id);
+          setTareas(prev => prev.filter(x => x.id !== id));
+        } catch (err) { alert(err.message); }
+      }
+    });
   };
 
   const setEstado = async (id, estado) => {
@@ -147,13 +162,19 @@ export default function App() {
     } catch (err) { alert(err.message); }
   };
 
-  const delRecordatorio = async id => {
+  const delRecordatorio = id => {
     const r = recordatorios.find(x => x.id === id);
-    if (!window.confirm(`¿Eliminar el recordatorio "${r?.titulo}"?`)) return;
-    try {
-      await remindersApi.remove(id);
-      setRecordatorios(prev => prev.filter(x => x.id !== id));
-    } catch (err) { alert(err.message); }
+    setConfirmAction({
+      title: "Eliminar Recordatorio",
+      message: `¿Eliminar el recordatorio "${r?.titulo}"? Esta acción no se puede deshacer.`,
+      isDanger: true,
+      onConfirm: async () => {
+        try {
+          await remindersApi.remove(id);
+          setRecordatorios(prev => prev.filter(x => x.id !== id));
+        } catch (err) { alert(err.message); }
+      }
+    });
   };
 
   // Adapting the horariodelete method to pass schedule id instead of index
@@ -167,8 +188,32 @@ export default function App() {
   return (
     <>
       <div className="app-layout">
-        <Sidebar view={view} setView={setView} tareas={tareas} />
+        {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
+        <Sidebar 
+          view={view} 
+          setView={(v) => { setView(v); setIsSidebarOpen(false); }} 
+          tareas={tareas} 
+          isOpen={isSidebarOpen} 
+          isCollapsed={isCollapsed}
+          toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
+        />
+        {isCollapsed && (
+          <button 
+            className="icon-btn hidden-mobile" 
+            onClick={() => setIsCollapsed(false)}
+            style={{ position: "fixed", top: 24, left: 24, zIndex: 100, background: "var(--bg-surface)", border: "1px solid var(--border)", width: 44, height: 44, borderRadius: "50%", fontSize: 20, boxShadow: "var(--sh-md)" }}
+            title="Mostrar Menú"
+          >
+            📚
+          </button>
+        )}
         <main className="main-content">
+          <div className="mobile-header">
+            <button className="icon-btn" onClick={() => setIsSidebarOpen(true)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div className="mobile-header-title">Organizador de Estudio</div>
+          </div>
           {view === "inicio"     && <Inicio     tareas={tareas} materias={materias} recordatorios={recordatorios} getMNombre={getMNombre} getMBg={getMBg} getMText={getMText} setEstado={setEstado} user={user} goToProfile={() => setView("perfil")} goToAdmin={() => setView("admin")} logout={logout} />}
           {view === "materias"   && <Materias   materias={materias} tareas={tareas} onNew={() => openModal("materia", { horarios: [] })} onEdit={m => openModal("materia", { ...m })} onDelete={delMateria} />}
           {view === "horarios"   && <Horarios   materias={materias} onAddHorario={addHorario} onDelHorario={adaptedDelHorario} />}
@@ -186,6 +231,7 @@ export default function App() {
       {modal === "materia"      && <MateriaModal      form={form} setForm={setForm} onSave={saveMateria}      onClose={closeModal} />}
       {modal === "tarea"        && <TareaModal        form={form} setForm={setForm} materias={materias} onSave={saveTarea}        onClose={closeModal} />}
       {modal === "recordatorio" && <RecordatorioModal form={form} setForm={setForm} onSave={saveRecordatorio} onClose={closeModal} />}
+      <ConfirmModal confirmAction={confirmAction} onClose={() => setConfirmAction(null)} />
     </>
   );
 }

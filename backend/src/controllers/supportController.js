@@ -3,7 +3,7 @@ import prisma from "../config/db.js";
 export const createReport = async (req, res, next) => {
   try {
     const { subject, description } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     if (!subject || !description) {
       return res.status(400).json({ error: "El asunto y la descripción son obligatorios." });
@@ -25,7 +25,7 @@ export const createReport = async (req, res, next) => {
 
 export const getReports = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const reports = await prisma.report.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" }

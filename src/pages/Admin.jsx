@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Users, Shield, Trash2, Edit } from "lucide-react";
 import { usersApi } from "../services/api";
+import { ConfirmModal } from "../components/modals/Modals";
 
 export default function Admin({ user }) {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
     loadUsers();
@@ -38,13 +40,19 @@ export default function Admin({ user }) {
 
   const eliminarUsuario = async (id) => {
     if (id === user?.id) return alert("No puedes eliminarte a ti mismo.");
-    if (!window.confirm("¿Seguro que deseas eliminar a este usuario?")) return;
-    try {
-      await usersApi.remove(id);
-      setUsuarios((prev) => prev.filter((x) => x.id !== id));
-    } catch (err) {
-      alert(err.message || "Error al eliminar usuario");
-    }
+    setConfirmAction({
+      title: "Eliminar Usuario",
+      message: "¿Seguro que deseas eliminar a este usuario?",
+      isDanger: true,
+      onConfirm: async () => {
+        try {
+          await usersApi.remove(id);
+          setUsuarios((prev) => prev.filter((x) => x.id !== id));
+        } catch (err) {
+          alert(err.message || "Error al eliminar usuario");
+        }
+      }
+    });
   };
 
   const editarUsuario = async (id) => {
@@ -138,6 +146,7 @@ export default function Admin({ user }) {
           </table>
         </div>
       </div>
+      <ConfirmModal confirmAction={confirmAction} onClose={() => setConfirmAction(null)} />
     </div>
   );
 }

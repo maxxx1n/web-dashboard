@@ -124,3 +124,29 @@ export function RecordatorioModal({ form, setForm, onSave, onClose }) {
     </div>
   );
 }
+
+/* ── CONFIRMACIÓN ── */
+export function ConfirmModal({ confirmAction, onClose }) {
+  if (!confirmAction) return null;
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: "400px", textAlign: "center", padding: "32px 24px" }}>
+        <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "var(--warning-bg, #3d2e0a)", color: "var(--warning, #fbbf24)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h2 className="modal-header" style={{ fontSize: "18px", marginBottom: "8px" }}>{confirmAction.title || "Confirmar Acción"}</h2>
+        <p style={{ color: "var(--text-secondary, #a1a1aa)", fontSize: "14px", marginTop: "0", marginBottom: "24px", whiteSpace: "pre-wrap" }}>
+          {confirmAction.message}
+        </p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+          <button className="btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn-primary" style={{ background: confirmAction.isDanger ? "var(--danger, #ef4444)" : "var(--accent)", color: "#fff" }} onClick={() => { onClose(); confirmAction.onConfirm(); }}>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  );
+}

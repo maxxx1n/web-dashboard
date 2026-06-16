@@ -12,10 +12,20 @@ import reminderRoutes from "./routes/reminders.js";
 import userRoutes from "./routes/users.js";
 import supportRoutes from "./routes/support.js";
 
+// Validate required environment variables early to fail fast in misconfigured environments
+const requiredEnv = ["DATABASE_URL", "JWT_SECRET"];
+for (const v of requiredEnv) {
+  if (!process.env[v]) {
+    console.error(`FATAL: environment variable ${v} is required but not set`);
+    process.exit(1);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Middleware global ──────────────────────────────────────
+// Configure CORS: allow all origins in dev
 app.use(cors());
 app.use(express.json());
 
