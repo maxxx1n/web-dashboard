@@ -1,32 +1,44 @@
 import {
   LayoutDashboard,
   BookOpen,
-  Clock,
   CheckSquare,
   Calendar,
   BarChart3,
-  LifeBuoy
+  LifeBuoy,
 } from "lucide-react";
 import { TODAY } from "../../utils/helpers";
 
 const NAV = [
-  { id: "inicio",     icon: LayoutDashboard, label: "Inicio"       },
-  { id: "materias",   icon: BookOpen,        label: "Materias"     },
-  { id: "horarios",   icon: Clock,           label: "Horarios"     },
-  { id: "tareas",     icon: CheckSquare,     label: "Tareas"       },
-  { id: "calendario", icon: Calendar,        label: "Calendario"   },
-  { id: "stats",      icon: BarChart3,       label: "Estadísticas" },
-  { id: "soporte",    icon: LifeBuoy,        label: "Soporte"      },
+  { id: "inicio", icon: LayoutDashboard, label: "Inicio" },
+  { id: "materias", icon: BookOpen, label: "Materias" },
+  { id: "tareas", icon: CheckSquare, label: "Tareas" },
+  { id: "calendario", icon: Calendar, label: "Calendario" },
+  { id: "stats", icon: BarChart3, label: "Estadísticas" },
+  { id: "soporte", icon: LifeBuoy, label: "Soporte" },
 ];
 
-export default function Sidebar({ view, setView, tareas = [], isOpen, isCollapsed, toggleCollapsed }) {
-  const pendientes = tareas.filter(t => t.estado === "pendiente").length;
+export default function Sidebar({
+  view,
+  setView,
+  tareas = [],
+  isOpen,
+  isCollapsed,
+  toggleCollapsed,
+}) {
+  const pendientes = tareas.filter((t) => t.estado === "pendiente").length;
 
   return (
-    <div className={`sidebar ${isOpen ? "open" : ""} ${isCollapsed && !isOpen ? "collapsed" : ""}`}>
+    <div
+      className={`sidebar ${isOpen ? "open" : ""} ${isCollapsed && !isOpen ? "collapsed" : ""}`}
+    >
       {/* Logo */}
       <div className="sidebar-header">
-        <div className="sidebar-logo" onClick={toggleCollapsed} style={{ cursor: "pointer" }} title="Ocultar/Mostrar Menú">
+        <div
+          className="sidebar-logo"
+          onClick={toggleCollapsed}
+          style={{ cursor: "pointer" }}
+          title="Ocultar/Mostrar Menú"
+        >
           <div className="sidebar-logo-icon">📚</div>
           {!isCollapsed && (
             <div>
@@ -52,7 +64,11 @@ export default function Sidebar({ view, setView, tareas = [], isOpen, isCollapse
               {!isCollapsed && <span>{label}</span>}
             </div>
             {id === "tareas" && pendientes > 0 && (
-              <span className={`nav-badge ${isCollapsed ? "badge-collapsed" : ""}`}>{pendientes}</span>
+              <span
+                className={`nav-badge ${isCollapsed ? "badge-collapsed" : ""}`}
+              >
+                {pendientes}
+              </span>
             )}
           </div>
         ))}
@@ -63,7 +79,12 @@ export default function Sidebar({ view, setView, tareas = [], isOpen, isCollapse
         <div className="sidebar-footer">
           <div className="sidebar-footer-label">Hoy</div>
           <div className="sidebar-footer-date">
-            {TODAY.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short", year: "numeric" })}
+            {TODAY.toLocaleDateString("es-AR", {
+              weekday: "long",
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
           </div>
         </div>
       )}
