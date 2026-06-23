@@ -143,8 +143,8 @@ export function ConfirmModal({ confirmAction, onClose }) {
           {confirmAction.message}
         </p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-          <button className="btn-ghost" onClick={onClose}>Cancelar</button>
-          <button className="btn-primary" style={{ background: confirmAction.isDanger ? "var(--danger, #ef4444)" : "var(--accent)", color: "#fff" }} onClick={() => { onClose(); confirmAction.onConfirm(); }}>Confirmar</button>
+          {!confirmAction.isAlert && <button className="btn-ghost" onClick={onClose}>Cancelar</button>}
+          <button className="btn-primary" style={{ background: confirmAction.isDanger ? "var(--danger, #ef4444)" : "var(--accent)", color: "#fff" }} onClick={() => { onClose(); if (confirmAction.onConfirm) confirmAction.onConfirm(); }}>{confirmAction.isAlert ? "Aceptar" : "Confirmar"}</button>
         </div>
       </div>
     </div>

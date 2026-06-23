@@ -1,4 +1,13 @@
 import prisma from "../config/db.js";
+import {
+  isValidString,
+  isValidInt,
+  isInWhitelist,
+  badRequest,
+  ALLOWED_DAYS,
+} from "../middleware/validate.js";
+
+const MAX_COLOR_IDX = 7;
 
 export const getAll = async (req, res, next) => {
   try {
@@ -14,12 +23,27 @@ export const getAll = async (req, res, next) => {
 export const create = async (req, res, next) => {
   try {
     const { name, description, colorIdx, schedules } = req.body;
-    if (!name?.trim()) return res.status(400).json({ error: "Nombre requerido" });
+    if (!isValidString(name, { maxLen: 150, required: true }))
+      return badRequest(res, "Nombre requerido (máximo 150 caracteres)");
+    if (!isValidString(description, { maxLen: 500 }))
+      return badRequest(res, "Descripción demasiado larga (máximo 500 caracteres)");
+    if (colorIdx !== undefined && !isValidInt(colorIdx, { min: 0, max: MAX_COLOR_IDX }))
+      return badRequest(res, `colorIdx debe ser un entero entre 0 y ${MAX_COLOR_IDX}`);
+
+    // Validar schedules si se envían
+    if (schedules?.length) {
+      for (const s of schedules) {
+        if (!isInWhitelist(s.day, ALLOWED_DAYS))
+          return badRequest(res, `Día inválido: ${s.day}. Permitidos: ${ALLOWED_DAYS.join(", ")}`);
+        if (!isValidString(s.startTime, { required: true }) || !isValidString(s.endTime, { required: true }))
+          return badRequest(res, "Hora de inicio y fin requeridas en cada horario");
+      }
+    }
 
     const subject = await prisma.subject.create({
       data: {
-        name,
-        description,
+        name: name.trim(),
+        description: description?.trim() || null,
         colorIdx: colorIdx ?? 0,
         userId: req.userId,
         schedules: schedules?.length ? { create: schedules } : undefined,
@@ -35,9 +59,21 @@ export const update = async (req, res, next) => {
     const { id } = req.params;
     const { name, description, colorIdx } = req.body;
 
+    if (name !== undefined && !isValidString(name, { maxLen: 150, required: true }))
+      return badRequest(res, "Nombre inválido (máximo 150 caracteres, no puede estar vacío)");
+    if (description !== undefined && !isValidString(description, { maxLen: 500 }))
+      return badRequest(res, "Descripción demasiado larga (máximo 500 caracteres)");
+    if (colorIdx !== undefined && !isValidInt(colorIdx, { min: 0, max: MAX_COLOR_IDX }))
+      return badRequest(res, `colorIdx debe ser un entero entre 0 y ${MAX_COLOR_IDX}`);
+
+    const data = {};
+    if (name !== undefined) data.name = name.trim();
+    if (description !== undefined) data.description = description?.trim() || null;
+    if (colorIdx !== undefined) data.colorIdx = colorIdx;
+
     const subject = await prisma.subject.updateMany({
       where: { id: Number(id), userId: req.userId },
-      data: { name, description, colorIdx },
+      data,
     });
     if (!subject.count) return res.status(404).json({ error: "Materia no encontrada" });
 
@@ -61,6 +97,11 @@ export const addSchedule = async (req, res, next) => {
     const { id } = req.params;
     const { day, startTime, endTime } = req.body;
 
+    if (!isInWhitelist(day, ALLOWED_DAYS))
+      return badRequest(res, `Día inválido. Permitidos: ${ALLOWED_DAYS.join(", ")}`);
+    if (!isValidString(startTime, { required: true }) || !isValidString(endTime, { required: true }))
+      return badRequest(res, "Hora de inicio y fin requeridas");
+
     // Verificar propiedad
     const subject = await prisma.subject.findFirst({ where: { id: Number(id), userId: req.userId } });
     if (!subject) return res.status(404).json({ error: "Materia no encontrada" });
@@ -74,8 +115,15 @@ export const removeSchedule = async (req, res, next) => {
   try {
     const { id, scheduleId } = req.params;
 
+    // Verificar propiedad del subject
     const subject = await prisma.subject.findFirst({ where: { id: Number(id), userId: req.userId } });
     if (!subject) return res.status(404).json({ error: "Materia no encontrada" });
+
+    // IDOR fix: verificar que el schedule pertenezca a este subject
+    const schedule = await prisma.schedule.findUnique({ where: { id: Number(scheduleId) } });
+    if (!schedule || schedule.subjectId !== Number(id)) {
+      return res.status(404).json({ error: "Horario no encontrado en esta materia" });
+    }
 
     await prisma.schedule.delete({ where: { id: Number(scheduleId) } });
     res.json({ message: "Horario eliminado" });

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { ConfirmModal } from "../components/modals/Modals";
 
 export default function Login() {
   const { login, register } = useAuth();
@@ -7,6 +8,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "", name: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ export default function Login() {
       } else {
         await register(form.email, form.password, form.name);
         setIsLogin(true);
-        alert("Cuenta creada exitosamente. Por favor, inicia sesion.");
+        setConfirmAction({ title: "Éxito", message: "Cuenta creada exitosamente. Por favor, inicia sesión.", isAlert: true });
       }
     } catch (err) {
       setError(err.message || "Error al autenticar");
@@ -267,6 +269,7 @@ export default function Login() {
           </p>
         </div>
       </div>
+      <ConfirmModal confirmAction={confirmAction} onClose={() => setConfirmAction(null)} />
     </div>
   );
 }

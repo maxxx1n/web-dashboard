@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { LogOut, User as UserIcon, Mail } from "lucide-react";
+import { LogOut, User as UserIcon, Mail, Palette, Moon } from "lucide-react";
 import { ConfirmModal } from "../components/modals/Modals";
+import { NEON_COLORS, applyTheme, loadTheme } from "../utils/theme";
 
 export default function Perfil({ user, logout, updateProfile }) {
   const [name, setName] = useState(user?.name || "");
@@ -8,6 +9,20 @@ export default function Perfil({ user, logout, updateProfile }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
+
+  const initialTheme = loadTheme();
+  const [themeMode, setThemeMode] = useState(initialTheme.mode || 'standard');
+  const [accentColor, setAccentColor] = useState(initialTheme.accent || '#8b7cf7');
+
+  const handleColorChange = (hex) => {
+    setAccentColor(hex);
+    applyTheme(hex, themeMode);
+  };
+
+  const handleModeChange = (mode) => {
+    setThemeMode(mode);
+    applyTheme(accentColor, mode);
+  };
 
   const handleSubmit = async (e, skipConfirm = false) => {
     if (e) e.preventDefault();
@@ -18,7 +33,7 @@ export default function Perfil({ user, logout, updateProfile }) {
     if (password) data.password = password;
 
     if (Object.keys(data).length === 0) {
-      return alert("No hay cambios para guardar");
+      return setConfirmAction({ title: "Atención", message: "No hay cambios para guardar", isAlert: true });
     }
 
     if (!skipConfirm) {
@@ -50,9 +65,9 @@ export default function Perfil({ user, logout, updateProfile }) {
     try {
       await updateProfile(data);
       setPassword("");
-      alert("Perfil actualizado correctamente");
+      setConfirmAction({ title: "Éxito", message: "Perfil actualizado correctamente", isAlert: true });
     } catch (error) {
-      alert(error.message);
+      setConfirmAction({ title: "Error", message: error.message, isAlert: true, isDanger: true });
     } finally {
       setLoading(false);
     }
@@ -116,6 +131,47 @@ export default function Perfil({ user, logout, updateProfile }) {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <div className="grid-2" style={{ marginTop: "24px" }}>
+        <div className="card" style={{ gridColumn: "1 / -1" }}>
+          <div className="section-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}><Palette size={18}/> Personalización Visual</div>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginTop: "16px" }}>
+            <div>
+              <label style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)", marginBottom: "16px", display: "block" }}>Color de Acento (RGB Neón)</label>
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {NEON_COLORS.map(color => (
+                  <button
+                    key={color.hex}
+                    onClick={() => handleColorChange(color.hex)}
+                    title={color.name}
+                    style={{
+                      width: "38px", height: "38px", borderRadius: "50%",
+                      background: color.hex, border: "none", cursor: "pointer",
+                      boxShadow: accentColor === color.hex ? `0 0 0 3px var(--bg-surface), 0 0 0 5px ${color.hex}, 0 0 15px ${color.hex}` : "none",
+                      transition: "all 0.2s"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div style={{ borderTop: "1px solid var(--border)", paddingTop: "20px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}><Moon size={16}/> Modo Oscuro</label>
+              <div style={{ display: "flex", gap: "24px" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                  <input type="radio" name="themeMode" checked={themeMode === 'standard'} onChange={() => handleModeChange('standard')} style={{ accentColor: "var(--accent)", width: "16px", height: "16px" }} />
+                  <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: "500" }}>Estándar</span>
+                </label>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                  <input type="radio" name="themeMode" checked={themeMode === 'oled'} onChange={() => handleModeChange('oled')} style={{ accentColor: "var(--accent)", width: "16px", height: "16px" }} />
+                  <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: "500" }}>OLED (Profundo)</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

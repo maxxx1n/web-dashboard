@@ -111,7 +111,7 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -133,7 +133,7 @@ export default function App() {
           setMaterias((prev) => prev.filter((x) => x.id !== id));
           setTareas((prev) => prev.filter((x) => x.materiaId !== id));
         } catch (err) {
-          alert(err.message);
+          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
         }
       },
     });
@@ -151,7 +151,7 @@ export default function App() {
         ),
       );
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -166,7 +166,7 @@ export default function App() {
         ),
       );
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -186,7 +186,7 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -201,7 +201,7 @@ export default function App() {
           await tasksApi.remove(id);
           setTareas((prev) => prev.filter((x) => x.id !== id));
         } catch (err) {
-          alert(err.message);
+          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
         }
       },
     });
@@ -212,7 +212,7 @@ export default function App() {
       await tasksApi.updateStatus(id, estado);
       setTareas((t) => t.map((x) => (x.id === id ? { ...x, estado } : x)));
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -229,7 +229,7 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      alert(err.message);
+      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
     }
   };
 
@@ -244,7 +244,7 @@ export default function App() {
           await remindersApi.remove(id);
           setRecordatorios((prev) => prev.filter((x) => x.id !== id));
         } catch (err) {
-          alert(err.message);
+          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
         }
       },
     });

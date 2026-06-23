@@ -1,6 +1,6 @@
 import { PRIORITY } from "../config/constants";
 
-export default function Stats({ tareas, materias, getMColor, getMNombre }) {
+export default function Stats({ tareas, materias, getMColor }) {
   const total      = tareas.length;
   const hechas     = tareas.filter(t => t.estado === "hecha").length;
   const progreso   = tareas.filter(t => t.estado === "progreso").length;

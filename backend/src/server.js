@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import authMiddleware from "./middleware/auth.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -25,12 +27,53 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Middleware global ──────────────────────────────────────
-// Configure CORS: allow all origins in dev
-app.use(cors());
-app.use(express.json());
+
+// Security headers (X-Content-Type-Options, X-Frame-Options, HSTS, etc.)
+app.use(helmet());
+
+// CORS: whitelist from CORS_ORIGIN env variable
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // Allow requests with no origin (server-to-server, curl, mobile apps)
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error("Origen no permitido por CORS"));
+    },
+    credentials: true,
+  })
+);
+
+// Body parser with size limit to prevent payload DoS
+app.use(express.json({ limit: "100kb" }));
+
+// ── Rate limiters ──────────────────────────────────────────
+
+// Global: 200 requests per 15 min per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiadas peticiones, intenta más tarde." },
+});
+app.use(globalLimiter);
+
+// Strict limiter for auth endpoints: 15 requests per 15 min per IP
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos de autenticación, intenta más tarde." },
+});
 
 // ── Rutas públicas ─────────────────────────────────────────
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 
 // ── Rutas protegidas ───────────────────────────────────────
 app.use("/api/subjects",  authMiddleware, subjectRoutes);
