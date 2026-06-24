@@ -32,7 +32,7 @@ export default function Inicio({
       <div className="page-header">
         <div>
           <h1 className="welcome-title">
-            {saludo} {user?.name?.split(" ")[0] || "Usuario"}
+            {saludo} {user?.name?.split(" ")[0] || "Usuario"} 👋
           </h1>
           <p className="welcome-summary">
             Tenés{" "}

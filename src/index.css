@@ -856,6 +856,33 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-decoration: underline;
 }
 
+/* Forgot password link */
+.login-forgot-link {
+  display: inline-block;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.login-forgot-link:hover {
+  color: var(--accent);
+}
+
+/* Code input */
+.login-input-code {
+  letter-spacing: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  padding-left: 44px;
+}
+
 /* ── Responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .login-page {

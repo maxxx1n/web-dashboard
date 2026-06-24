@@ -31,16 +31,28 @@ async function fetchApi(endpoint, options = {}) {
 
 // ── Auth ──────────────────────────────────────────────────────────
 function mapUser(u) {
-  return { id: u.id, email: u.email, name: u.name, rol: u.role || "Usuario", estado: u.status || "Activo" };
+  return {
+    id: u.id,
+    email: u.email,
+    name: u.name,
+    rol: u.role || "Usuario",
+    estado: u.status || "Activo",
+  };
 }
 
 export const authApi = {
   login: async (email, password) => {
-    const data = await fetchApi("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+    const data = await fetchApi("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
     return { token: data.token, user: mapUser(data.user) };
   },
   register: async (email, password, name) => {
-    const data = await fetchApi("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) });
+    const data = await fetchApi("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password, name }),
+    });
     return { token: data.token, user: mapUser(data.user) };
   },
   me: async () => {
@@ -48,8 +60,23 @@ export const authApi = {
     return mapUser(data);
   },
   updateProfile: async (data) => {
-    const res = await fetchApi("/users/me", { method: "PUT", body: JSON.stringify(data) });
+    const res = await fetchApi("/users/me", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
     return mapUser(res);
+  },
+  forgotPassword: async (email) => {
+    return fetchApi("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+  },
+  resetPassword: async (email, code, password) => {
+    return fetchApi("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ email, code, password }),
+    });
   },
 };
 
@@ -57,12 +84,12 @@ export const authApi = {
 export const subjectsApi = {
   getAll: async () => {
     const subjects = await fetchApi("/subjects");
-    return subjects.map(s => ({
+    return subjects.map((s) => ({
       id: s.id,
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
-      horarios: (s.schedules || []).map(h => ({
+      horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
@@ -77,7 +104,7 @@ export const subjectsApi = {
         name: data.nombre,
         description: data.profesor,
         colorIdx: data.colorIdx,
-        schedules: (data.horarios || []).map(h => ({
+        schedules: (data.horarios || []).map((h) => ({
           day: h.dia,
           startTime: h.inicio,
           endTime: h.fin,
@@ -89,7 +116,7 @@ export const subjectsApi = {
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
-      horarios: (s.schedules || []).map(h => ({
+      horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
@@ -111,7 +138,7 @@ export const subjectsApi = {
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
-      horarios: (s.schedules || []).map(h => ({
+      horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
@@ -137,14 +164,16 @@ export const subjectsApi = {
     };
   },
   removeSchedule: (subjectId, scheduleId) =>
-    fetchApi(`/subjects/${subjectId}/schedules/${scheduleId}`, { method: "DELETE" }),
+    fetchApi(`/subjects/${subjectId}/schedules/${scheduleId}`, {
+      method: "DELETE",
+    }),
 };
 
 // ── Tareas (Tasks) ────────────────────────────────────────────────
 export const tasksApi = {
   getAll: async () => {
     const tasks = await fetchApi("/tasks");
-    return tasks.map(t => ({
+    return tasks.map((t) => ({
       id: t.id,
       titulo: t.title,
       prioridad: t.priority,
@@ -205,7 +234,7 @@ export const tasksApi = {
 export const remindersApi = {
   getAll: async () => {
     const rems = await fetchApi("/reminders");
-    return rems.map(r => ({
+    return rems.map((r) => ({
       id: r.id,
       titulo: r.title,
       fecha: r.date,
@@ -256,23 +285,30 @@ export const remindersApi = {
 export const usersApi = {
   getAll: async () => {
     const users = await fetchApi("/users");
-    return users.map(u => ({
+    return users.map((u) => ({
       id: u.id,
       nombre: u.name || "Usuario",
       email: u.email,
       rol: u.role || "Usuario",
-      estado: u.status || "Activo"
+      estado: u.status || "Activo",
     }));
   },
   updateRole: (id, rol) =>
-    fetchApi(`/users/${id}/role`, { method: "PATCH", body: JSON.stringify({ role: rol }) }),
+    fetchApi(`/users/${id}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role: rol }),
+    }),
   updateStatus: (id, estado) =>
-    fetchApi(`/users/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: estado }) }),
+    fetchApi(`/users/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: estado }),
+    }),
   remove: (id) => fetchApi(`/users/${id}`, { method: "DELETE" }),
 };
 
 // ── Soporte (Support) ─────────────────────────────────────────────
 export const supportApi = {
-  create: async (data) => fetchApi("/support", { method: "POST", body: JSON.stringify(data) }),
+  create: async (data) =>
+    fetchApi("/support", { method: "POST", body: JSON.stringify(data) }),
   getAll: async () => fetchApi("/support"),
 };
