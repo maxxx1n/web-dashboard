@@ -3,3 +3,6 @@ node_modules
 .env
 
 /generated/prisma
+
+# Database backups contain sensitive user data (hashes, emails, PII)
+backups/
