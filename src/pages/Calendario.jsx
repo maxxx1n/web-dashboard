@@ -109,7 +109,7 @@ export default function Calendario({
   };
 
   return (
-    <div>
+    <div className="animate-in">
       <div className="page-header">
         <h1 className="page-title">Calendario</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

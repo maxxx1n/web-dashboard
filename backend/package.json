@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "backup": "node scripts/backup.js",
+    "restore": "node scripts/restore.js",
+    "premigrate": "npm run backup",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
     "seed": "node src/seed.js"

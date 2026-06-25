@@ -23,7 +23,9 @@ async function fetchApi(endpoint, options = {}) {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data.error || "Error en la petición");
+    const err = new Error(data.error || "Error en la petición");
+    err.status = res.status;
+    throw err;
   }
 
   return data;

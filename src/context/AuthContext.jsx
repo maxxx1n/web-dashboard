@@ -14,8 +14,10 @@ export function AuthProvider({ children }) {
         try {
           const userData = await authApi.me();
           setUser(userData);
-        } catch {
-          localStorage.removeItem("auth_token");
+        } catch (err) {
+          if (err.status === 401 || err.status === 403) {
+            localStorage.removeItem("auth_token");
+          }
           setUser(null);
         }
       }
@@ -45,7 +47,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, updateProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

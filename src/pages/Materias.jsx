@@ -251,7 +251,7 @@ export default function Materias({
   onDelHorario,
 }) {
   return (
-    <div>
+    <div className="animate-in">
       <div className="page-header">
         <div>
           <h1 className="page-title">Materias</h1>

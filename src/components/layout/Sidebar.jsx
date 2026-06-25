@@ -5,6 +5,8 @@ import {
   Calendar,
   BarChart3,
   LifeBuoy,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { TODAY } from "../../utils/helpers";
 
@@ -33,19 +35,32 @@ export default function Sidebar({
     >
       {/* Logo */}
       <div className="sidebar-header">
-        <div
-          className="sidebar-logo"
-          onClick={toggleCollapsed}
-          style={{ cursor: "pointer" }}
-          title="Ocultar/Mostrar Menú"
-        >
-          <div className="sidebar-logo-icon">📚</div>
+        <div className="sidebar-logo">
+          <div className="sidebar-logo-icon">
+            <BookOpen size={18} color="#fff" />
+          </div>
           {!isCollapsed && (
-            <div>
+            <div style={{ flex: 1 }}>
               <div className="sidebar-logo-text">Organizador de Estudio</div>
               <div className="sidebar-logo-sub">Panel de estudio</div>
             </div>
           )}
+          <button
+            className="icon-btn sidebar-collapse-btn"
+            onClick={toggleCollapsed}
+            title={isCollapsed ? "Expandir menú" : "Colapsar menú"}
+            style={{
+              color: "var(--text-muted)",
+              padding: 4,
+              marginLeft: isCollapsed ? 0 : "auto",
+            }}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen size={16} />
+            ) : (
+              <PanelLeftClose size={16} />
+            )}
+          </button>
         </div>
       </div>
 

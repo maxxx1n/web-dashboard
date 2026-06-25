@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { COLORS, COLOR_BG, COLOR_TEXT } from "./config/constants";
 import { subjectsApi, tasksApi, remindersApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
+import { BookOpen } from "lucide-react";
 import Sidebar from "./components/layout/Sidebar";
 import {
   MateriaModal,
@@ -111,7 +112,12 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -133,7 +139,12 @@ export default function App() {
           setMaterias((prev) => prev.filter((x) => x.id !== id));
           setTareas((prev) => prev.filter((x) => x.materiaId !== id));
         } catch (err) {
-          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+          setConfirmAction({
+            title: "Error",
+            message: err.message,
+            isAlert: true,
+            isDanger: true,
+          });
         }
       },
     });
@@ -151,7 +162,12 @@ export default function App() {
         ),
       );
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -166,7 +182,12 @@ export default function App() {
         ),
       );
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -186,7 +207,12 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -201,7 +227,12 @@ export default function App() {
           await tasksApi.remove(id);
           setTareas((prev) => prev.filter((x) => x.id !== id));
         } catch (err) {
-          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+          setConfirmAction({
+            title: "Error",
+            message: err.message,
+            isAlert: true,
+            isDanger: true,
+          });
         }
       },
     });
@@ -212,7 +243,12 @@ export default function App() {
       await tasksApi.updateStatus(id, estado);
       setTareas((t) => t.map((x) => (x.id === id ? { ...x, estado } : x)));
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -229,7 +265,12 @@ export default function App() {
       }
       closeModal();
     } catch (err) {
-      setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
     }
   };
 
@@ -244,7 +285,12 @@ export default function App() {
           await remindersApi.remove(id);
           setRecordatorios((prev) => prev.filter((x) => x.id !== id));
         } catch (err) {
-          setConfirmAction({ title: "Error", message: err.message, isAlert: true, isDanger: true });
+          setConfirmAction({
+            title: "Error",
+            message: err.message,
+            isAlert: true,
+            isDanger: true,
+          });
         }
       },
     });
@@ -297,7 +343,7 @@ export default function App() {
             }}
             title="Mostrar Menú"
           >
-            📚
+            <BookOpen size={20} />
           </button>
         )}
         <main className="main-content">

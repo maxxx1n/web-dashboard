@@ -1661,6 +1661,21 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   animation: fadeInUp 0.3s ease forwards;
 }
 
+.mobile-header {
+  display: none;
+}
+
+.header-profile-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-profile-text {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .sidebar {
@@ -1704,9 +1719,100 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .cal-container {
     overflow-x: auto;
   }
+  /* ── Responsive grids ─────────────────────────────────── */
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .page-header {
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .header-profile-box {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .header-profile-text {
+    text-align: left;
+  }
+  .welcome-title {
+    font-size: 22px;
+  }
+  /* Inicio bottom grid */
+  .inicio-grid-bottom {
+    grid-template-columns: 1fr !important;
+  }
+  /* Calendar header */
+  .cal-header-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  /* Task row actions */
+  .task-row-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 }
-.mobile-header {
-  display: none;
+@media (max-width: 600px) {
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .metric-card-value {
+    font-size: 30px;
+  }
+  .filter-panel {
+    flex-direction: column;
+  }
+  .cal-cell {
+    min-height: 60px;
+    padding: 4px;
+  }
+  .cal-event-pill {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+}
+
+/* ── Sidebar collapse button ──────────────────────────────────────────── */
+.sidebar-collapse-btn {
+  transition: var(--t);
+  opacity: 0.6;
+}
+.sidebar-collapse-btn:hover {
+  opacity: 1;
+  color: var(--accent) !important;
+}
+
+/* ── Sidebar collapsed tooltips ───────────────────────────────────────── */
+.sidebar.collapsed .nav-item {
+  position: relative;
+}
+.sidebar.collapsed .nav-item::after {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--sh-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s var(--ease);
+  z-index: 300;
+}
+.sidebar.collapsed .nav-item:hover::after {
+  opacity: 1;
 }
 
 /* Collapsed Sidebar */

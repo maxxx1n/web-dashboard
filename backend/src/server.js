@@ -42,10 +42,20 @@ app.use(
     origin: (origin, cb) => {
       // Allow requests with no origin (server-to-server, curl, mobile apps)
       if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+
+      // Permitir IPs de red local para testing desde móviles
+      if (
+        /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(
+          origin,
+        )
+      ) {
+        return cb(null, true);
+      }
+
       cb(new Error("Origen no permitido por CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 // Body parser with size limit to prevent payload DoS
@@ -69,18 +79,20 @@ const authLimiter = rateLimit({
   max: 15,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Demasiados intentos de autenticación, intenta más tarde." },
+  message: {
+    error: "Demasiados intentos de autenticación, intenta más tarde.",
+  },
 });
 
 // ── Rutas públicas ─────────────────────────────────────────
 app.use("/api/auth", authLimiter, authRoutes);
 
 // ── Rutas protegidas ───────────────────────────────────────
-app.use("/api/subjects",  authMiddleware, subjectRoutes);
-app.use("/api/tasks",     authMiddleware, taskRoutes);
+app.use("/api/subjects", authMiddleware, subjectRoutes);
+app.use("/api/tasks", authMiddleware, taskRoutes);
 app.use("/api/reminders", authMiddleware, reminderRoutes);
-app.use("/api/users",     authMiddleware, userRoutes);
-app.use("/api/support",   authMiddleware, supportRoutes);
+app.use("/api/users", authMiddleware, userRoutes);
+app.use("/api/support", authMiddleware, supportRoutes);
 
 // ── Health check ───────────────────────────────────────────
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));

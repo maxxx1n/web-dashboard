@@ -1,6 +1,15 @@
 import { PRIORITY } from "../config/constants";
 import { todayStr } from "../utils/helpers";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import {
+  Target,
+  RefreshCw,
+  CheckCircle2,
+  Layers,
+  User,
+  Shield,
+  LogOut,
+} from "lucide-react";
 
 export default function Inicio({
   tareas,
@@ -14,6 +23,7 @@ export default function Inicio({
   logout,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
   const pendientes = tareas.filter((t) => t.estado !== "hecha").length;
   const hechas = tareas.filter((t) => t.estado === "hecha").length;
   const hoy = tareas.filter(
@@ -26,13 +36,25 @@ export default function Inicio({
   const saludo =
     hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
 
+  // Close dropdown on click outside
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
+
   return (
-    <div>
+    <div className="animate-in">
       {/* Header */}
       <div className="page-header">
         <div>
           <h1 className="welcome-title">
-            {saludo} {user?.name?.split(" ")[0] || "Usuario"} 👋
+            {saludo} {user?.name?.split(" ")[0] || "Usuario"}
           </h1>
           <p className="welcome-summary">
             Tenés{" "}
@@ -50,14 +72,8 @@ export default function Inicio({
             )}
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div
-            style={{
-              textAlign: "right",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+        <div className="header-profile-box">
+          <div className="header-profile-text">
             <span style={{ fontSize: "14px", fontWeight: "bold" }}>
               {user?.name?.split(" ")[0] || "Usuario"}
             </span>
@@ -72,7 +88,7 @@ export default function Inicio({
               {user?.rol || "Administrador"}
             </span>
           </div>
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative" }} ref={menuRef}>
             <div
               className="profile-fab"
               style={{
@@ -91,13 +107,19 @@ export default function Inicio({
               <div className="profile-dropdown">
                 {user?.rol === "Administrador" && (
                   <button className="dropdown-item" onClick={goToAdmin}>
+                    <Shield
+                      size={14}
+                      style={{ marginRight: 8, opacity: 0.7 }}
+                    />
                     Administración
                   </button>
                 )}
                 <button className="dropdown-item" onClick={goToProfile}>
+                  <User size={14} style={{ marginRight: 8, opacity: 0.7 }} />
                   Mi Perfil
                 </button>
                 <button className="dropdown-item danger" onClick={logout}>
+                  <LogOut size={14} style={{ marginRight: 8, opacity: 0.7 }} />
                   Cerrar Sesión
                 </button>
               </div>
@@ -113,28 +135,28 @@ export default function Inicio({
             label: "Pendientes",
             value: pendientes,
             color: "#9d96f0",
-            icon: "◎",
+            icon: <Target size={24} />,
             bg: "#2d2b4e",
           },
           {
             label: "En progreso",
             value: tareas.filter((t) => t.estado === "progreso").length,
             color: "#fbbf24",
-            icon: "⟳",
+            icon: <RefreshCw size={24} />,
             bg: "#3d2e0a",
           },
           {
             label: "Completadas",
             value: hechas,
             color: "#34d399",
-            icon: "✓",
+            icon: <CheckCircle2 size={24} />,
             bg: "#1a3d30",
           },
           {
             label: "Materias",
             value: materias.length,
             color: "#60a5fa",
-            icon: "◈",
+            icon: <Layers size={24} />,
             bg: "#1a2d4e",
           },
         ].map((c, i) => (
@@ -181,6 +203,7 @@ export default function Inicio({
       </div>
 
       <div
+        className="inicio-grid-bottom"
         style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 20 }}
       >
         {/* Tareas recientes */}
@@ -278,7 +301,7 @@ export default function Inicio({
                   }}
                 >
                   <div style={{ fontSize: 13, fontWeight: 600 }}>
-                    🔔 {r.titulo}
+                    {r.titulo}
                   </div>
                   <div
                     style={{
