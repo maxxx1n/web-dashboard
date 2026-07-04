@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { COLORS, COLOR_BG, COLOR_TEXT } from "./config/constants";
-import { subjectsApi, tasksApi, remindersApi } from "./services/api";
+import { subjectsApi, tasksApi, remindersApi, gradesApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
 import { BookOpen } from "lucide-react";
 import Sidebar from "./components/layout/Sidebar";
@@ -181,6 +181,87 @@ export default function App() {
             : x,
         ),
       );
+    } catch (err) {
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
+    }
+  };
+
+  // ── Grades (notas) ─────────────────────────────────────────────────────────
+  const addGrade = async (materiaId, data) => {
+    try {
+      const grade = await gradesApi.add(materiaId, data);
+      setMaterias((m) =>
+        m.map((x) =>
+          x.id === materiaId
+            ? { ...x, grades: [...(x.grades || []), grade] }
+            : x,
+        ),
+      );
+      return grade;
+    } catch (err) {
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
+    }
+  };
+
+  const updateGrade = async (materiaId, gradeId, data) => {
+    try {
+      const updated = await gradesApi.update(materiaId, gradeId, data);
+      setMaterias((m) =>
+        m.map((x) =>
+          x.id === materiaId
+            ? {
+                ...x,
+                grades: (x.grades || []).map((g) =>
+                  g.id === gradeId ? updated : g,
+                ),
+              }
+            : x,
+        ),
+      );
+    } catch (err) {
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
+    }
+  };
+
+  const removeGrade = async (materiaId, gradeId) => {
+    try {
+      await gradesApi.remove(materiaId, gradeId);
+      setMaterias((m) =>
+        m.map((x) =>
+          x.id === materiaId
+            ? { ...x, grades: (x.grades || []).filter((g) => g.id !== gradeId) }
+            : x,
+        ),
+      );
+    } catch (err) {
+      setConfirmAction({
+        title: "Error",
+        message: err.message,
+        isAlert: true,
+        isDanger: true,
+      });
+    }
+  };
+
+  const updateAcademicStatus = async (materiaId, status) => {
+    try {
+      const updated = await subjectsApi.updateAcademicStatus(materiaId, status);
+      setMaterias((m) => m.map((x) => (x.id === materiaId ? updated : x)));
     } catch (err) {
       setConfirmAction({
         title: "Error",
@@ -385,7 +466,9 @@ export default function App() {
             <Materias
               materias={materias}
               tareas={tareas}
-              onNew={() => openModal("materia", { horarios: [] })}
+              onNew={(defaultData) =>
+                openModal("materia", { horarios: [], year: 1, ...defaultData })
+              }
               onEdit={(m) => openModal("materia", { ...m })}
               onDelete={delMateria}
               onAddHorario={addHorario}
@@ -426,6 +509,10 @@ export default function App() {
               materias={materias}
               getMColor={getMColor}
               getMNombre={getMNombre}
+              onAddGrade={addGrade}
+              onUpdateGrade={updateGrade}
+              onRemoveGrade={removeGrade}
+              onUpdateAcademicStatus={updateAcademicStatus}
             />
           )}
           {view === "soporte" && <Soporte />}

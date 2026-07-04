@@ -91,11 +91,18 @@ export const subjectsApi = {
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
+      academicStatus: s.academicStatus || "Cursando",
+      year: s.year || 1,
       horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
         fin: h.endTime,
+      })),
+      grades: (s.grades || []).map((g) => ({
+        id: g.id,
+        label: g.label,
+        value: g.value,
       })),
     }));
   },
@@ -106,6 +113,7 @@ export const subjectsApi = {
         name: data.nombre,
         description: data.profesor,
         colorIdx: data.colorIdx,
+        year: data.year !== undefined ? data.year : 1,
         schedules: (data.horarios || []).map((h) => ({
           day: h.dia,
           startTime: h.inicio,
@@ -118,11 +126,18 @@ export const subjectsApi = {
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
+      academicStatus: s.academicStatus || "Cursando",
+      year: s.year || 1,
       horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
         fin: h.endTime,
+      })),
+      grades: (s.grades || []).map((g) => ({
+        id: g.id,
+        label: g.label,
+        value: g.value,
       })),
     };
   },
@@ -133,6 +148,7 @@ export const subjectsApi = {
         name: data.nombre,
         description: data.profesor,
         colorIdx: data.colorIdx,
+        year: data.year,
       }),
     });
     return {
@@ -140,11 +156,18 @@ export const subjectsApi = {
       nombre: s.name,
       profesor: s.description || "",
       colorIdx: s.colorIdx,
+      academicStatus: s.academicStatus || "Cursando",
+      year: s.year || 1,
       horarios: (s.schedules || []).map((h) => ({
         id: h.id,
         dia: h.day,
         inicio: h.startTime,
         fin: h.endTime,
+      })),
+      grades: (s.grades || []).map((g) => ({
+        id: g.id,
+        label: g.label,
+        value: g.value,
       })),
     };
   },
@@ -169,6 +192,31 @@ export const subjectsApi = {
     fetchApi(`/subjects/${subjectId}/schedules/${scheduleId}`, {
       method: "DELETE",
     }),
+  updateAcademicStatus: async (subjectId, academicStatus) => {
+    const s = await fetchApi(`/subjects/${subjectId}/academic-status`, {
+      method: "PATCH",
+      body: JSON.stringify({ academicStatus }),
+    });
+    return {
+      id: s.id,
+      nombre: s.name,
+      profesor: s.description || "",
+      colorIdx: s.colorIdx,
+      academicStatus: s.academicStatus || "Cursando",
+      year: s.year || 1,
+      horarios: (s.schedules || []).map((h) => ({
+        id: h.id,
+        dia: h.day,
+        inicio: h.startTime,
+        fin: h.endTime,
+      })),
+      grades: (s.grades || []).map((g) => ({
+        id: g.id,
+        label: g.label,
+        value: g.value,
+      })),
+    };
+  },
 };
 
 // ── Tareas (Tasks) ────────────────────────────────────────────────
@@ -230,6 +278,26 @@ export const tasksApi = {
       body: JSON.stringify({ status }),
     }),
   remove: (id) => fetchApi(`/tasks/${id}`, { method: "DELETE" }),
+};
+
+// ── Notas (Grades) ────────────────────────────────────────
+export const gradesApi = {
+  add: async (subjectId, data) => {
+    const g = await fetchApi(`/subjects/${subjectId}/grades`, {
+      method: "POST",
+      body: JSON.stringify({ label: data.label, value: data.value }),
+    });
+    return { id: g.id, label: g.label, value: g.value };
+  },
+  update: async (subjectId, gradeId, data) => {
+    const g = await fetchApi(`/subjects/${subjectId}/grades/${gradeId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+    return { id: g.id, label: g.label, value: g.value };
+  },
+  remove: (subjectId, gradeId) =>
+    fetchApi(`/subjects/${subjectId}/grades/${gradeId}`, { method: "DELETE" }),
 };
 
 // ── Recordatorios (Reminders) ─────────────────────────────────────

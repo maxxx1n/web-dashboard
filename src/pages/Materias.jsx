@@ -250,22 +250,105 @@ export default function Materias({
   onAddHorario,
   onDelHorario,
 }) {
+  const [selectedYear, setSelectedYear] = useState("current");
+
+  const maxYear = Math.max(...materias.map((m) => m.year || 1), 1);
+  const activeYear = selectedYear === "current" ? maxYear : selectedYear;
+
+  const filteredMaterias =
+    activeYear === "todas"
+      ? materias
+      : materias.filter((m) => (m.year || 1) === activeYear);
+
+  const handleNew = () => {
+    onNew({
+      year: typeof activeYear === "number" ? activeYear : maxYear,
+    });
+  };
+
   return (
     <div className="animate-in">
       <div className="page-header">
         <div>
           <h1 className="page-title">Materias</h1>
           <p className="page-subtitle">
-            {materias.length} registrada{materias.length !== 1 ? "s" : ""}
+            {filteredMaterias.length} materia
+            {filteredMaterias.length !== 1 ? "s" : ""}{" "}
+            {activeYear !== "todas" ? `en ${activeYear}° Año` : "en total"}
           </p>
         </div>
-        <button className="btn-primary" onClick={onNew}>
+        <button className="btn-primary" onClick={handleNew}>
           <Plus size={16} /> Nueva materia
         </button>
       </div>
 
+      {/* Selector de año para filtrar materias */}
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          marginBottom: 20,
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 13,
+            color: "var(--text-muted)",
+            fontWeight: 600,
+            marginRight: 4,
+          }}
+        >
+          Año de cursada:
+        </span>
+        {[...new Set(materias.map((m) => m.year || 1))]
+          .sort((a, b) => a - b)
+          .map((y) => (
+            <button
+              key={y}
+              onClick={() => setSelectedYear(y)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 20,
+                fontSize: 12,
+                fontWeight: 600,
+                border: "1px solid",
+                borderColor:
+                  activeYear === y ? "var(--accent)" : "var(--border)",
+                background: activeYear === y ? "#2d2b4e" : "var(--bg-elevated)",
+                color: activeYear === y ? "#9d96f0" : "var(--text-muted)",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              {y === 1 ? "1er" : y === 2 ? "2do" : y === 3 ? "3er" : `${y}°`}{" "}
+              Año
+            </button>
+          ))}
+        <button
+          onClick={() => setSelectedYear("todas")}
+          style={{
+            padding: "6px 14px",
+            borderRadius: 20,
+            fontSize: 12,
+            fontWeight: 600,
+            border: "1px solid",
+            borderColor:
+              activeYear === "todas" ? "var(--accent)" : "var(--border)",
+            background:
+              activeYear === "todas" ? "#2d2b4e" : "var(--bg-elevated)",
+            color: activeYear === "todas" ? "#9d96f0" : "var(--text-muted)",
+            cursor: "pointer",
+            transition: "all 0.2s",
+          }}
+        >
+          Todas ({materias.length})
+        </button>
+      </div>
+
       <div className="grid-auto">
-        {materias.map((m) => (
+        {filteredMaterias.map((m) => (
           <MateriaCard
             key={m.id}
             m={m}
@@ -278,7 +361,7 @@ export default function Materias({
         ))}
 
         {/* Add card */}
-        <div className="add-card" onClick={onNew}>
+        <div className="add-card" onClick={handleNew}>
           <Plus size={28} />
           Agregar materia
         </div>

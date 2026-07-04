@@ -34,9 +34,13 @@ model Subject {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  academicStatus String @default("Cursando") @map("academic_status")
+  year           Int    @default(1)
+
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules Schedule[]
   tasks     Task[]
+  grades    Grade[]
 
   @@map("subjects")
 }
@@ -97,6 +101,18 @@ model Report {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reports")
+}
+
+model Grade {
+  id        Int      @id @default(autoincrement())
+  label     String
+  value     Float
+  subjectId Int      @map("subject_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("grades")
 }
 
 model PasswordReset {

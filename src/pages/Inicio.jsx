@@ -322,47 +322,70 @@ export default function Inicio({
             )}
           </div>
           <div className="card">
-            <div className="section-title">Materias</div>
-            {materias.slice(0, 4).map((m) => (
-              <div
-                key={m.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "7px 0",
-                  borderBottom: "1px solid var(--border)",
-                }}
-              >
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: ["#9d96f0", "#34d399", "#f87171", "#60a5fa"][
-                      m.colorIdx % 4
-                    ],
-                    flexShrink: 0,
-                  }}
-                />
-                <div style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>
-                  {m.nombre}
-                </div>
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                  {
-                    tareas.filter(
-                      (t) => t.materiaId === m.id && t.estado !== "hecha",
-                    ).length
-                  }{" "}
-                  pend.
-                </span>
-              </div>
-            ))}
-            {!materias.length && (
-              <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                Sin materias
-              </div>
-            )}
+            {(() => {
+              const maxYear = Math.max(...materias.map((m) => m.year || 1), 1);
+              const materiasActivas = materias.filter(
+                (m) => (m.year || 1) === maxYear,
+              );
+              return (
+                <>
+                  <div className="section-title">
+                    Materias (
+                    {maxYear === 1
+                      ? "1er"
+                      : maxYear === 2
+                        ? "2do"
+                        : `${maxYear}°`}{" "}
+                    Año)
+                  </div>
+                  {materiasActivas.slice(0, 5).map((m) => (
+                    <div
+                      key={m.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        padding: "7px 0",
+                        borderBottom: "1px solid var(--border)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: [
+                            "#9d96f0",
+                            "#34d399",
+                            "#f87171",
+                            "#60a5fa",
+                          ][m.colorIdx % 4],
+                          flexShrink: 0,
+                        }}
+                      />
+                      <div style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>
+                        {m.nombre}
+                      </div>
+                      <span
+                        style={{ fontSize: 11, color: "var(--text-muted)" }}
+                      >
+                        {
+                          tareas.filter(
+                            (t) => t.materiaId === m.id && t.estado !== "hecha",
+                          ).length
+                        }{" "}
+                        pend.
+                      </span>
+                    </div>
+                  ))}
+                  {!materiasActivas.length && (
+                    <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                      Sin materias de este año
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>
