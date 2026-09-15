@@ -337,9 +337,11 @@ export default function Stats({
   onRemoveGrade,
   onUpdateAcademicStatus,
 }) {
-  const total = tareas.length;
-  const hechas = tareas.filter((t) => t.estado === "hecha").length;
-  const pct = total ? Math.round((hechas / total) * 100) : 0;
+  const [collapsedYears, setCollapsedYears] = useState({});
+
+  const toggleYear = (year) => {
+    setCollapsedYears((prev) => ({ ...prev, [year]: !prev[year] }));
+  };
 
   // Contadores académicos
   const cursando = materias.filter(
@@ -501,48 +503,6 @@ export default function Stats({
         ))}
       </div>
 
-      {/* Progreso de tareas */}
-      <div className="card" style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 12,
-          }}
-        >
-          <span style={{ fontWeight: 600, fontSize: 14 }}>
-            Progreso de tareas
-          </span>
-          <span
-            style={{ fontWeight: 700, color: "var(--accent)", fontSize: 14 }}
-          >
-            {pct}%
-          </span>
-        </div>
-        <div className="progress-track" style={{ height: 8 }}>
-          <div
-            className="progress-fill"
-            style={{
-              width: `${pct}%`,
-              background: "linear-gradient(90deg,#9d96f0,#34d399)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 8,
-            fontSize: 12,
-            color: "var(--text-muted)",
-          }}
-        >
-          <span>{hechas} completadas</span>
-          <span>{total} total</span>
-        </div>
-      </div>
-
       {/* Sección de notas por materia — agrupado por año */}
       <div style={{ marginBottom: 16 }}>
         <div
@@ -597,18 +557,23 @@ export default function Stats({
                 ).toFixed(2)
               : "0.00";
 
+          const isCollapsed = !!collapsedYears[year];
+
           return (
             <div key={year} style={{ marginBottom: 28 }}>
               <div
+                onClick={() => toggleYear(year)}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: 12,
+                  marginBottom: isCollapsed ? 0 : 12,
                   padding: "10px 16px",
                   background: "var(--bg-elevated)",
                   borderRadius: 12,
                   border: "1px solid var(--border)",
+                  cursor: "pointer",
+                  userSelect: "none",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -648,55 +613,64 @@ export default function Stats({
                     </div>
                   </div>
                 </div>
-                {promAño !== null && (
-                  <div style={{ textAlign: "right" }}>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: "var(--text-muted)",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.5px",
-                        marginBottom: 2,
-                      }}
-                    >
-                      Promedio
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  {promAño !== null && (
+                    <div style={{ textAlign: "right" }}>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: "var(--text-muted)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                          marginBottom: 2,
+                        }}
+                      >
+                        Promedio
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 20,
+                          fontWeight: 800,
+                          color:
+                            parseFloat(promAño) > 0
+                              ? promAño >= 6
+                                ? "#34d399"
+                                : promAño >= 4
+                                  ? "#fbbf24"
+                                  : "#f87171"
+                              : "var(--text-muted)",
+                        }}
+                      >
+                        {promAño}
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 800,
-                        color:
-                          parseFloat(promAño) > 0
-                            ? promAño >= 6
-                              ? "#34d399"
-                              : promAño >= 4
-                                ? "#fbbf24"
-                                : "#f87171"
-                            : "var(--text-muted)",
-                      }}
-                    >
-                      {promAño}
-                    </div>
-                  </div>
-                )}
+                  )}
+                  {isCollapsed ? (
+                    <ChevronDown size={20} style={{ color: "var(--text-muted)" }} />
+                  ) : (
+                    <ChevronUp size={20} style={{ color: "var(--text-muted)" }} />
+                  )}
+                </div>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                }}
-              >
-                {materiasDelAño.map((m) => (
-                  <MateriaGradeCard
-                    key={m.id}
-                    materia={m}
-                    onAddGrade={onAddGrade}
-                    onRemoveGrade={onRemoveGrade}
-                    onUpdateAcademicStatus={onUpdateAcademicStatus}
-                  />
-                ))}
-              </div>
+              {!isCollapsed && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
+                  {materiasDelAño.map((m) => (
+                    <MateriaGradeCard
+                      key={m.id}
+                      materia={m}
+                      onAddGrade={onAddGrade}
+                      onRemoveGrade={onRemoveGrade}
+                      onUpdateAcademicStatus={onUpdateAcademicStatus}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           );
         });

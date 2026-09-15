@@ -13,6 +13,7 @@ async function backup() {
       Task: await prisma.task.findMany(),
       Reminder: await prisma.reminder.findMany(),
       Report: await prisma.report.findMany(),
+      Grade: await prisma.grade.findMany(),
       PasswordReset: await prisma.passwordReset.findMany(),
     };
 

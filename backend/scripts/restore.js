@@ -29,7 +29,7 @@ async function restore() {
     // 1. Borrar tablas existentes (en orden inverso de dependencias o usando cascada)
     console.log("Limpiando base de datos...");
     await prisma.$executeRawUnsafe(
-      `TRUNCATE TABLE users, subjects, schedules, tasks, reminders, reports, password_resets RESTART IDENTITY CASCADE;`,
+      `TRUNCATE TABLE users, subjects, schedules, tasks, reminders, reports, grades, password_resets RESTART IDENTITY CASCADE;`,
     );
 
     // 2. Restaurar data
@@ -45,6 +45,8 @@ async function restore() {
       await prisma.reminder.createMany({ data: data.Reminder });
     if (data.Report?.length)
       await prisma.report.createMany({ data: data.Report });
+    if (data.Grade?.length)
+      await prisma.grade.createMany({ data: data.Grade });
     if (data.PasswordReset?.length)
       await prisma.passwordReset.createMany({ data: data.PasswordReset });
 
@@ -57,6 +59,7 @@ async function restore() {
       "tasks",
       "reminders",
       "reports",
+      "grades",
       "password_resets",
     ];
     for (const table of tables) {
