@@ -469,7 +469,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     linear-gradient(90deg, rgba(139, 124, 247, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at 50% 50%,
+    black 20%,
+    transparent 70%
+  );
   pointer-events: none;
   z-index: 0;
 }
@@ -486,7 +490,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .login-orb-1 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(139, 124, 247, 0.15) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(139, 124, 247, 0.15) 0%,
+    transparent 70%
+  );
   top: 10%;
   left: 15%;
   animation: orbFloat1 12s ease-in-out infinite;
@@ -495,7 +503,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .login-orb-2 {
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(96, 165, 250, 0.1) 0%,
+    transparent 70%
+  );
   bottom: 20%;
   right: 10%;
   animation: orbFloat2 15s ease-in-out infinite;
@@ -504,7 +516,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .login-orb-3 {
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, rgba(52, 211, 153, 0.08) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(52, 211, 153, 0.08) 0%,
+    transparent 70%
+  );
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -512,20 +528,39 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 @keyframes orbFloat1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -20px) scale(1.1); }
-  66% { transform: translate(-15px, 25px) scale(0.95); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.1);
+  }
+  66% {
+    transform: translate(-15px, 25px) scale(0.95);
+  }
 }
 
 @keyframes orbFloat2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-25px, 15px) scale(1.05); }
-  66% { transform: translate(20px, -30px) scale(0.9); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-25px, 15px) scale(1.05);
+  }
+  66% {
+    transform: translate(20px, -30px) scale(0.9);
+  }
 }
 
 @keyframes orbFloat3 {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.15); }
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
 }
 
 .login-brand-content {
@@ -565,8 +600,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 @keyframes badgePulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(139, 124, 247, 0.5); }
-  50% { opacity: 0.5; box-shadow: 0 0 16px rgba(139, 124, 247, 0.8); }
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(139, 124, 247, 0.5);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 16px rgba(139, 124, 247, 0.8);
+  }
 }
 
 .login-brand-title {
@@ -1893,5 +1935,104 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 @media (min-width: 901px) {
   .sidebar.collapsed {
     display: flex !important;
+  }
+}
+/* ── OPTIMIZACIÓN MÓVIL Y BARRA INFERIOR (PWA) ───────────────────────── */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  /* Evita destello azul al tocar botones en pantallas táctiles */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Evita que iOS/Android hagan zoom automático al tocar un input */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Espacio inferior para que la barra de navegación no tape el contenido */
+  .main-content {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    padding-top: max(12px, env(safe-area-inset-top, 12px));
+    backdrop-filter: blur(10px);
+  }
+
+  /* Barra inferior fija estilo App Nativa */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bg-surface, #0f172a);
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    z-index: 95;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .bottom-nav-item {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      color 0.15s ease,
+      transform 0.1s ease;
+  }
+
+  .bottom-nav-item:active {
+    transform: scale(0.94);
+  }
+
+  .bottom-nav-item.active {
+    color: var(--primary, #6366f1);
+    font-weight: 600;
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 20px);
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

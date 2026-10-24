@@ -39,21 +39,7 @@ const allowedOrigins = (process.env.CORS_ORIGIN || "")
 
 app.use(
   cors({
-    origin: (origin, cb) => {
-      // Allow requests with no origin (server-to-server, curl, mobile apps)
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-
-      // Permitir IPs de red local para testing desde móviles
-      if (
-        /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(
-          origin,
-        )
-      ) {
-        return cb(null, true);
-      }
-
-      cb(new Error("Origen no permitido por CORS"));
-    },
+    origin: true, // Permite conexiones desde la IP del celular y tu dominio en Vercel
     credentials: true,
   }),
 );

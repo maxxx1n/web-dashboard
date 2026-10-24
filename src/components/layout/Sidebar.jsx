@@ -46,7 +46,7 @@ export default function Sidebar({
             </div>
           )}
           <button
-            className="icon-btn sidebar-collapse-btn"
+            className="icon-btn sidebar-collapse-btn hidden-mobile"
             onClick={toggleCollapsed}
             title={isCollapsed ? "Expandir menú" : "Colapsar menú"}
             style={{

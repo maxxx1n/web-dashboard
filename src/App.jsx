@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { COLORS, COLOR_BG, COLOR_TEXT } from "./config/constants";
 import { subjectsApi, tasksApi, remindersApi, gradesApi } from "./services/api";
 import { useAuth } from "./context/AuthContext";
-import { BookOpen } from "lucide-react";
+// Reemplaza: import { BookOpen } from "lucide-react";
+import {
+  BookOpen,
+  LayoutDashboard,
+  CheckSquare,
+  Calendar,
+  BarChart3,
+  User,
+} from "lucide-react";
 import Sidebar from "./components/layout/Sidebar";
 import {
   MateriaModal,
@@ -385,6 +393,8 @@ export default function App() {
     }
   };
 
+  const pendientesCount = tareas.filter((t) => t.estado === "pendiente").length;
+
   return (
     <>
       <div className="app-layout">
@@ -429,7 +439,11 @@ export default function App() {
         )}
         <main className="main-content">
           <div className="mobile-header">
-            <button className="icon-btn" onClick={() => setIsSidebarOpen(true)}>
+            <button
+              className="icon-btn"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Abrir menú"
+            >
               <svg
                 width="24"
                 height="24"
@@ -445,8 +459,17 @@ export default function App() {
                 <line x1="3" y1="18" x2="21" y2="18"></line>
               </svg>
             </button>
-            <div className="mobile-header-title">Organizador de Estudio</div>
+            <div className="mobile-header-title">Studydesk</div>
+            <button
+              className="icon-btn"
+              onClick={() => setView("perfil")}
+              aria-label="Ir a perfil"
+              style={{ marginLeft: "auto" }}
+            >
+              <User size={20} />
+            </button>
           </div>
+
           {view === "inicio" && (
             <Inicio
               tareas={tareas}
@@ -521,6 +544,48 @@ export default function App() {
           )}
           {view === "admin" && <Admin user={user} />}
         </main>
+
+        {/* Barra de navegación inferior exclusiva para celulares */}
+        <nav className="mobile-bottom-nav">
+          <button
+            className={`bottom-nav-item ${view === "inicio" ? "active" : ""}`}
+            onClick={() => setView("inicio")}
+          >
+            <LayoutDashboard size={20} />
+            <span>Inicio</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "materias" ? "active" : ""}`}
+            onClick={() => setView("materias")}
+          >
+            <BookOpen size={20} />
+            <span>Materias</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "tareas" ? "active" : ""}`}
+            onClick={() => setView("tareas")}
+          >
+            <CheckSquare size={20} />
+            <span>Tareas</span>
+            {pendientesCount > 0 && (
+              <span className="bottom-nav-badge">{pendientesCount}</span>
+            )}
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "calendario" ? "active" : ""}`}
+            onClick={() => setView("calendario")}
+          >
+            <Calendar size={20} />
+            <span>Agenda</span>
+          </button>
+          <button
+            className={`bottom-nav-item ${view === "stats" ? "active" : ""}`}
+            onClick={() => setView("stats")}
+          >
+            <BarChart3 size={20} />
+            <span>Notas</span>
+          </button>
+        </nav>
       </div>
 
       {modal === "materia" && (

@@ -2,13 +2,20 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: [
+        "favicon.svg",
+        "icons.svg",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+      ],
+      devOptions: {
+        enabled: true, // Permite probar la instalación PWA también en entorno local
+      },
       manifest: {
         name: "Organizador de Estudio",
         short_name: "Studydesk",
@@ -36,6 +43,26 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "studydesk-api-cache",
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // Guarda los datos 7 días para uso offline
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
           },
         ],
       },

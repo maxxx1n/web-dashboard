@@ -331,7 +331,6 @@ function MateriaGradeCard({
 }
 
 export default function Stats({
-  tareas,
   materias,
   onAddGrade,
   onRemoveGrade,
@@ -646,9 +645,15 @@ export default function Stats({
                     </div>
                   )}
                   {isCollapsed ? (
-                    <ChevronDown size={20} style={{ color: "var(--text-muted)" }} />
+                    <ChevronDown
+                      size={20}
+                      style={{ color: "var(--text-muted)" }}
+                    />
                   ) : (
-                    <ChevronUp size={20} style={{ color: "var(--text-muted)" }} />
+                    <ChevronUp
+                      size={20}
+                      style={{ color: "var(--text-muted)" }}
+                    />
                   )}
                 </div>
               </div>
